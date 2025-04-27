@@ -175,7 +175,7 @@ export const file_admin = (args: string[]): number => {
         vm.runInContext(script, context, {filename: file})
     }
 
-    console.log('configurations = ' + JSON.stringify(configurations, null, 2))
+    console.log(configurations)
 
     return 0
 }
