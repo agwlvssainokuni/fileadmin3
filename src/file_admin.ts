@@ -52,66 +52,101 @@ export const file_admin = (args: string[]): number => {
 
     const configurations: any = []
     const context = vm.createContext({
-        archive_many_to_one: (label: string, basedir: string, arcname: string, owner: string, to_dir: string, collector: any): void => {
-            configurations.push({
-                type: "archive_many_to_one",
-                label: label,
-                basedir: basedir,
-                arcname: arcname,
-                owner: owner,
-                to_dir: to_dir,
-                collector: collector,
-            })
-        },
-        archive_one_to_one: (label: string, basedir: string, arcname: (p: string) => string, owner: string, to_dir: string, collector: any): void => {
-            configurations.push({
-                type: "archive_one_to_one",
-                label: label,
-                basedir: basedir,
-                arcname: arcname,
-                owner: owner,
-                to_dir: to_dir,
-                collector: collector,
-            })
-        },
-        backup_file: (label: string, basedir: string, to_dir: string, collector: any): void => {
-            configurations.push({
-                type: "backup_file",
-                label: label,
-                basedir: basedir,
-                to_dir: to_dir,
-                collector: collector,
-            })
-        },
-        cleanup_file: (label: string, basedir: string, to_dir: string, collector: any): void => {
-            configurations.push({
-                type: "cleanup_file",
-                label: label,
-                basedir: basedir,
-                to_dir: to_dir,
-                collector: collector,
-            })
-        },
-        collect_by_generation: (pattern: string[], extra_cond: (f: string) => boolean, comparator: (a: string, b: string) => number, generation: number): any => {
-            return {
-                type: "collect_by_generation",
-                pattern: pattern,
-                extra_cond: extra_cond,
-                comparator: comparator,
-                generation: generation,
+            archive_many_to_one: (
+                label: string,
+                basedir: string,
+                collector: any,
+                to_dir: string,
+                arcname: string,
+                options: { owner?: string } = {},
+            ): void => {
+                configurations.push({
+                    type: "archive_many_to_one",
+                    label: label,
+                    basedir: basedir,
+                    collector: collector,
+                    to_dir: to_dir,
+                    arcname: arcname,
+                    options: options,
+                })
+            },
+            archive_one_to_one: (
+                label: string,
+                basedir: string,
+                collector: any,
+                to_dir: string,
+                arcname: (p: string) => string,
+                options: { owner?: string } = {},
+            ): void => {
+                configurations.push({
+                    type: "archive_one_to_one",
+                    label: label,
+                    basedir: basedir,
+                    collector: collector,
+                    to_dir: to_dir,
+                    arcname: arcname,
+                    options: options,
+                })
             }
-        },
-        collect_by_threshold: (pattern: string[], extra_cond: (f: string) => boolean, comparator: (a: string, b: string) => number, slicer: (f: string) => string, threshold: number): any => {
-            return {
-                type: "collect_by_threshold",
-                pattern: pattern,
-                extra_cond: extra_cond,
-                comparator: comparator,
-                slicer: slicer,
-                threshold: threshold,
+            ,
+            backup_file: (
+                label: string,
+                basedir: string,
+                collector: any,
+                to_dir: string
+            ): void => {
+                configurations.push({
+                    type: "backup_file",
+                    label: label,
+                    basedir: basedir,
+                    collector: collector,
+                    to_dir: to_dir,
+                })
+            },
+            cleanup_file: (
+                label: string,
+                basedir: string,
+                collector: any,
+            ): void => {
+                configurations.push({
+                    type: "cleanup_file",
+                    label: label,
+                    basedir: basedir,
+                    collector: collector,
+                })
+            },
+            collect_by_generation: (
+                pattern: string[],
+                extra_cond: (f: string) => boolean,
+                comparator: (a: string, b: string) => number,
+                generation: number
+            ): any => {
+                return {
+                    type: "collect_by_generation",
+                    pattern: pattern,
+                    extra_cond: extra_cond,
+                    comparator: comparator,
+                    generation: generation,
+                }
+            },
+            collect_by_threshold: (
+                pattern: string[],
+                extra_cond: (f: string) => boolean,
+                comparator: (a: string, b: string) => number,
+                slicer: (f: string) => string,
+                threshold: number
+            ): any => {
+                return {
+                    type: "collect_by_threshold",
+                    pattern: pattern,
+                    extra_cond: extra_cond,
+                    comparator: comparator,
+                    slicer: slicer,
+                    threshold: threshold,
+                }
             }
         }
-    })
+    )
 
     for (const f of command.args) {
         const file = path.resolve(f)
