@@ -1,0 +1,28 @@
+{
+  "name": "fileadmin3",
+  "version": "0.0.0",
+  "homepage": "https://github.com/agwlvssainokuni/fileadmin3",
+  "license": "Apache-2.0",
+  "type": "module",
+  "bin": {
+    "fileadmin": "dist/fileadmin.cjs"
+  },
+  "scripts": {
+    "build": "tsc --build && vite build",
+    "build.d": "tsc --declaration --outDir node_modules/.tmp src/dsl.ts && mv node_modules/.tmp/dsl.d.ts dsl/",
+    "clean": "rimraf dist",
+    "cleanlib": "rimraf node_modules",
+    "test": "jest"
+  },
+  "dependencies": {
+    "commander": "^13.1.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "rimraf": "^6.0.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.31.0",
+    "vite": "^6.3.3"
+  }
+}
