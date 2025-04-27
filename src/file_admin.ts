@@ -19,6 +19,13 @@ import {lightFormat} from 'date-fns'
 import fs from 'node:fs'
 import path from 'node:path'
 import vm from 'node:vm'
+import {ArchiveManyToOne} from './file_admin/archive_many_to_one'
+import {ArchiveOneToOne} from './file_admin/archive_one_to_one'
+import {BackupFile} from './file_admin/backup_file'
+import {CleanupFile} from './file_admin/cleanup_file'
+import {CollectByGeneration} from './file_admin/collect_by_generation'
+import {CollectByThreshold} from './file_admin/collect_by_threshold'
+import {FileCollector, FileProcessor} from './file_admin/interface'
 
 export const file_admin = (args: string[]): number => {
 
@@ -50,7 +57,7 @@ export const file_admin = (args: string[]): number => {
     console.log('syslog = ', options.syslog)
     console.log('console = ', options.console)
 
-    const configurations: any = []
+    const configurations: FileProcessor[] = []
     const allowedToRequire: string[] = [
         'path',
     ]
@@ -68,21 +75,20 @@ export const file_admin = (args: string[]): number => {
             label: string,
             config: {
                 basedir: string,
-                collector: any,
+                collector: FileCollector,
                 to_dir: string,
                 arcname: string,
-                options: { owner?: string },
+                options?: { owner?: string },
             },
         ): void => {
-            configurations.push({
-                type: "archive_many_to_one",
-                label: label,
-                basedir: config.basedir,
-                collector: config.collector,
-                to_dir: config.to_dir,
-                arcname: config.arcname,
-                options: config.options,
-            })
+            configurations.push(new ArchiveManyToOne(
+                label,
+                config.basedir,
+                config.collector,
+                config.to_dir,
+                config.arcname,
+                config.options?.owner,
+            ))
         },
         archive_one_to_one: (
             label: string,
@@ -91,20 +97,18 @@ export const file_admin = (args: string[]): number => {
                 collector: any,
                 to_dir: string,
                 arcname: (p: string) => string,
-                options: { owner?: string },
+                options?: { owner?: string },
             },
         ): void => {
-            configurations.push({
-                type: "archive_one_to_one",
-                label: label,
-                basedir: config.basedir,
-                collector: config.collector,
-                to_dir: config.to_dir,
-                arcname: config.arcname,
-                options: config.options,
-            })
-        }
-        ,
+            configurations.push(new ArchiveOneToOne(
+                label,
+                config.basedir,
+                config.collector,
+                config.to_dir,
+                config.arcname,
+                config.options?.owner,
+            ))
+        },
         backup_file: (
             label: string,
             config: {
@@ -113,13 +117,12 @@ export const file_admin = (args: string[]): number => {
                 to_dir: string,
             },
         ): void => {
-            configurations.push({
-                type: "backup_file",
-                label: label,
-                basedir: config.basedir,
-                collector: config.collector,
-                to_dir: config.to_dir,
-            })
+            configurations.push(new BackupFile(
+                label,
+                config.basedir,
+                config.collector,
+                config.to_dir,
+            ))
         },
         cleanup_file: (
             label: string,
@@ -128,42 +131,43 @@ export const file_admin = (args: string[]): number => {
                 collector: any,
             },
         ): void => {
-            configurations.push({
-                type: "cleanup_file",
-                label: label,
-                basedir: config.basedir,
-                collector: config.collector,
-            })
+            configurations.push(new CleanupFile(
+                label,
+                config.basedir,
+                config.collector,
+            ))
         },
         collect_by_generation: (
-            pattern: string[],
-            extra_cond: (f: string) => boolean,
-            comparator: (a: string, b: string) => number,
-            generation: number
-        ): any => {
-            return {
-                type: "collect_by_generation",
-                pattern: pattern,
-                extra_cond: extra_cond,
-                comparator: comparator,
-                generation: generation,
+            config: {
+                pattern: string[],
+                extra_cond: (f: string) => boolean,
+                comparator: (a: string, b: string) => number,
+                generation: number,
             }
+        ): FileCollector => {
+            return new CollectByGeneration(
+                config.pattern,
+                config.extra_cond,
+                config.comparator,
+                config.generation,
+            )
         },
         collect_by_threshold: (
-            pattern: string[],
-            extra_cond: (f: string) => boolean,
-            comparator: (a: string, b: string) => number,
-            slicer: (f: string) => string,
-            threshold: number
-        ): any => {
-            return {
-                type: "collect_by_threshold",
-                pattern: pattern,
-                extra_cond: extra_cond,
-                comparator: comparator,
-                slicer: slicer,
-                threshold: threshold,
+            config: {
+                pattern: string[],
+                extra_cond: (f: string) => boolean,
+                comparator: (a: string, b: string) => number,
+                slicer: (f: string) => string,
+                threshold: number,
             }
+        ): FileCollector => {
+            return new CollectByThreshold(
+                config.pattern,
+                config.extra_cond,
+                config.comparator,
+                config.slicer,
+                config.threshold,
+            )
         }
     })
 
@@ -175,7 +179,24 @@ export const file_admin = (args: string[]): number => {
         vm.runInContext(script, context, {filename: file})
     }
 
-    console.log(configurations)
+    let ok: boolean = true
+    if (options.validate) {
+        for (const config of configurations) {
+            if (!config.validate()) {
+                ok = false
+            }
+        }
+    } else {
+        for (const config of configurations) {
+            if (!config.process(options.time, options.dryRun)) {
+                ok = false
+            }
+        }
+    }
 
-    return 0
+    if (ok) {
+        return 0
+    } else {
+        return 1
+    }
 }
