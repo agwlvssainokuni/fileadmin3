@@ -14,13 +14,22 @@
  * limitations under the License.
  */
 
-import {FileCollector, FileProcessor} from './interface'
 import {ArchiveManyToOne} from './archive_many_to_one'
 import {ArchiveOneToOne} from './archive_one_to_one'
 import {BackupFile} from './backup_file'
 import {CleanupFile} from './cleanup_file'
 import {CollectByGeneration} from './collect_by_generation'
 import {CollectByThreshold} from './collect_by_threshold'
+
+export interface FileProcessor {
+    process: (time: Date, dryRun: boolean) => boolean
+    validate: () => boolean
+}
+
+export interface FileCollector {
+    collect: (time: Date) => string[]
+    validate: () => boolean
+}
 
 export const archive_many_to_one = (
     label: string,

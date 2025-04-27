@@ -19,13 +19,16 @@ import {lightFormat} from 'date-fns'
 import fs from 'node:fs'
 import path from 'node:path'
 import vm from 'node:vm'
-import {ArchiveManyToOne} from './file_admin/archive_many_to_one'
-import {ArchiveOneToOne} from './file_admin/archive_one_to_one'
-import {BackupFile} from './file_admin/backup_file'
-import {CleanupFile} from './file_admin/cleanup_file'
-import {CollectByGeneration} from './file_admin/collect_by_generation'
-import {CollectByThreshold} from './file_admin/collect_by_threshold'
-import {FileCollector, FileProcessor} from './file_admin/interface'
+import {
+    archive_many_to_one,
+    archive_one_to_one,
+    backup_file,
+    cleanup_file,
+    collect_by_generation,
+    collect_by_threshold,
+    FileCollector,
+    FileProcessor,
+} from './file_admin/dsl'
 
 export const file_admin = (args: string[]): number => {
 
@@ -80,15 +83,10 @@ export const file_admin = (args: string[]): number => {
                 arcname: string,
                 options?: { owner?: string },
             },
-        ): void => {
-            configurations.push(new ArchiveManyToOne(
-                label,
-                config.basedir,
-                config.collector,
-                config.to_dir,
-                config.arcname,
-                config.options?.owner,
-            ))
+        ): FileProcessor => {
+            const p = archive_many_to_one(label, config)
+            configurations.push(p)
+            return p
         },
         archive_one_to_one: (
             label: string,
@@ -99,15 +97,10 @@ export const file_admin = (args: string[]): number => {
                 arcname: (p: string) => string,
                 options?: { owner?: string },
             },
-        ): void => {
-            configurations.push(new ArchiveOneToOne(
-                label,
-                config.basedir,
-                config.collector,
-                config.to_dir,
-                config.arcname,
-                config.options?.owner,
-            ))
+        ): FileProcessor => {
+            const p = archive_one_to_one(label, config)
+            configurations.push(p)
+            return p
         },
         backup_file: (
             label: string,
@@ -116,13 +109,10 @@ export const file_admin = (args: string[]): number => {
                 collector: any,
                 to_dir: string,
             },
-        ): void => {
-            configurations.push(new BackupFile(
-                label,
-                config.basedir,
-                config.collector,
-                config.to_dir,
-            ))
+        ): FileProcessor => {
+            const p = backup_file(label, config)
+            configurations.push(p)
+            return p
         },
         cleanup_file: (
             label: string,
@@ -130,12 +120,10 @@ export const file_admin = (args: string[]): number => {
                 basedir: string,
                 collector: any,
             },
-        ): void => {
-            configurations.push(new CleanupFile(
-                label,
-                config.basedir,
-                config.collector,
-            ))
+        ): FileProcessor => {
+            const p = cleanup_file(label, config)
+            configurations.push(p)
+            return p
         },
         collect_by_generation: (
             config: {
@@ -145,12 +133,7 @@ export const file_admin = (args: string[]): number => {
                 generation: number,
             }
         ): FileCollector => {
-            return new CollectByGeneration(
-                config.pattern,
-                config.extra_cond,
-                config.comparator,
-                config.generation,
-            )
+            return collect_by_generation(config)
         },
         collect_by_threshold: (
             config: {
@@ -161,13 +144,7 @@ export const file_admin = (args: string[]): number => {
                 threshold: number,
             }
         ): FileCollector => {
-            return new CollectByThreshold(
-                config.pattern,
-                config.extra_cond,
-                config.comparator,
-                config.slicer,
-                config.threshold,
-            )
+            return collect_by_threshold(config)
         }
     })
 
