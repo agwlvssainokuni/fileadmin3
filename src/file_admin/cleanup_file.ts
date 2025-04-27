@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {FileCollector, FileProcessor} from './interface'
+import {FileCollector, FileProcessor} from './dsl'
 
 export class CleanupFile implements FileProcessor {
     private readonly logger: any

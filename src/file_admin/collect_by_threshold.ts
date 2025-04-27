@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {FileCollector} from './interface'
+import {FileCollector} from './dsl'
 
 export class CollectByThreshold implements FileCollector {
     constructor(
