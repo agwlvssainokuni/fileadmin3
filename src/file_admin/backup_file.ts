@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {FileCollector, FileProcessor} from "./interface.ts";
+import {FileCollector, FileProcessor} from './interface'
 
 export class BackupFile implements FileProcessor {
     private readonly logger: any

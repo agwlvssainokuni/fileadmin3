@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {FileCollector} from "./interface.ts";
+import {FileCollector} from './interface'
 
 export class CollectByThreshold implements FileCollector {
     constructor(
