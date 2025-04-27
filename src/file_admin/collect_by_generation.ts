@@ -17,12 +17,19 @@
 import {FileCollector} from './dsl'
 
 export class CollectByGeneration implements FileCollector {
+    private readonly extra_cond: (f: string) => boolean
+    private readonly comparator: (a: string, b: string) => number
+    private readonly generation: number
+
     constructor(
         private readonly pattern: string[],
-        private readonly extra_cond: (f: string) => boolean,
-        private readonly comparator: (a: string, b: string) => number,
-        private readonly generation: number,
+        extra_cond?: (f: string) => boolean,
+        comparator?: (a: string, b: string) => number,
+        generation?: number,
     ) {
+        this.extra_cond = extra_cond ?? (() => true)
+        this.comparator = comparator ?? ((a, b) => a.localeCompare(b))
+        this.generation = generation ?? 0
     }
 
     validate(): boolean {

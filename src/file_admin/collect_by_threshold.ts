@@ -15,15 +15,25 @@
  */
 
 import {FileCollector} from './dsl'
+import {lightFormat} from "date-fns";
 
 export class CollectByThreshold implements FileCollector {
+    private readonly extra_cond: (f: string) => boolean
+    private readonly comparator: (a: string, b: string) => number
+    private readonly slicer: (f: string) => string
+    private readonly threshold: (time: Date) => string
+
     constructor(
         private readonly pattern: string[],
-        private readonly extra_cond: (f: string) => boolean,
-        private readonly comparator: (a: string, b: string) => number,
-        private readonly slicer: (f: string) => string,
-        private readonly threshold: number,
+        extra_cond?: (f: string) => boolean,
+        comparator?: (a: string, b: string) => number,
+        slicer?: (f: string) => string,
+        threshold?: (time: Date) => string,
     ) {
+        this.extra_cond = extra_cond ?? (() => true)
+        this.comparator = comparator ?? ((a, b) => a.localeCompare(b))
+        this.slicer = slicer ?? ((f) => f)
+        this.threshold = threshold ?? ((time) => lightFormat(time, 'yyyyMMdd'))
     }
 
     validate(): boolean {

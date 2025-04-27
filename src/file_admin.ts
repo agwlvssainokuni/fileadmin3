@@ -141,7 +141,7 @@ export const file_admin = (args: string[]): number => {
                 extra_cond: (f: string) => boolean,
                 comparator: (a: string, b: string) => number,
                 slicer: (f: string) => string,
-                threshold: number,
+                threshold: (time: Date) => string,
             }
         ): FileCollector => {
             return collect_by_threshold(config)

@@ -123,7 +123,7 @@ export const collect_by_threshold = (
         extra_cond: (f: string) => boolean,
         comparator: (a: string, b: string) => number,
         slicer: (f: string) => string,
-        threshold: number,
+        threshold: (time: Date) => string,
     }
 ): FileCollector => {
     return new CollectByThreshold(
