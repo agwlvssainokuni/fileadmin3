@@ -66,65 +66,73 @@ export const file_admin = (args: string[]): number => {
         __filename: __dirname,
         archive_many_to_one: (
             label: string,
-            basedir: string,
-            collector: any,
-            to_dir: string,
-            arcname: string,
-            options: { owner?: string } = {},
+            config: {
+                basedir: string,
+                collector: any,
+                to_dir: string,
+                arcname: string,
+                options: { owner?: string },
+            },
         ): void => {
             configurations.push({
                 type: "archive_many_to_one",
                 label: label,
-                basedir: basedir,
-                collector: collector,
-                to_dir: to_dir,
-                arcname: arcname,
-                options: options,
+                basedir: config.basedir,
+                collector: config.collector,
+                to_dir: config.to_dir,
+                arcname: config.arcname,
+                options: config.options,
             })
         },
         archive_one_to_one: (
             label: string,
-            basedir: string,
-            collector: any,
-            to_dir: string,
-            arcname: (p: string) => string,
-            options: { owner?: string } = {},
+            config: {
+                basedir: string,
+                collector: any,
+                to_dir: string,
+                arcname: (p: string) => string,
+                options: { owner?: string },
+            },
         ): void => {
             configurations.push({
                 type: "archive_one_to_one",
                 label: label,
-                basedir: basedir,
-                collector: collector,
-                to_dir: to_dir,
-                arcname: arcname,
-                options: options,
+                basedir: config.basedir,
+                collector: config.collector,
+                to_dir: config.to_dir,
+                arcname: config.arcname,
+                options: config.options,
             })
         }
         ,
         backup_file: (
             label: string,
-            basedir: string,
-            collector: any,
-            to_dir: string
+            config: {
+                basedir: string,
+                collector: any,
+                to_dir: string,
+            },
         ): void => {
             configurations.push({
                 type: "backup_file",
                 label: label,
-                basedir: basedir,
-                collector: collector,
-                to_dir: to_dir,
+                basedir: config.basedir,
+                collector: config.collector,
+                to_dir: config.to_dir,
             })
         },
         cleanup_file: (
             label: string,
-            basedir: string,
-            collector: any,
+            config: {
+                basedir: string,
+                collector: any,
+            },
         ): void => {
             configurations.push({
                 type: "cleanup_file",
                 label: label,
-                basedir: basedir,
-                collector: collector,
+                basedir: config.basedir,
+                collector: config.collector,
             })
         },
         collect_by_generation: (
