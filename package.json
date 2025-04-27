@@ -15,7 +15,8 @@
     "test": "jest"
   },
   "dependencies": {
-    "commander": "^13.1.0"
+    "commander": "^13.1.0",
+    "date-fns": "^4.1.0"
   },
   "devDependencies": {
     "jest": "^29.7.0",
