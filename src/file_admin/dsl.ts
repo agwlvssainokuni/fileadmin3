@@ -37,7 +37,7 @@ export const archive_many_to_one = (
         basedir: string,
         collector: FileCollector,
         to_dir: string,
-        arcname: string,
+        arcname: (time: Date) => string,
         options?: { owner?: string },
     },
 ): FileProcessor => {

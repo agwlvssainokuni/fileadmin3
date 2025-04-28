@@ -24,7 +24,7 @@ export class ArchiveManyToOne implements FileProcessor {
         private readonly basedir: string,
         private readonly collector: FileCollector,
         private readonly to_dir: string,
-        private readonly arcname: string,
+        private readonly arcname: (time: Date) => string,
         private readonly chown?: string,
     ) {
         this.logger = {

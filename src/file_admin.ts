@@ -63,6 +63,7 @@ export const file_admin = (args: string[]): number => {
     const configurations: FileProcessor[] = []
     const allowedToRequire: string[] = [
         'path',
+        'date-fns',
     ]
     const context = vm.createContext({
         console: console,
@@ -80,7 +81,7 @@ export const file_admin = (args: string[]): number => {
                 basedir: string,
                 collector: FileCollector,
                 to_dir: string,
-                arcname: string,
+                arcname: (time: Date) => string,
                 options?: { owner?: string },
             },
         ): FileProcessor => {
