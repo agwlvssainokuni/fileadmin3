@@ -66,14 +66,14 @@ export const file_admin = (args: string[]): number => {
     ]
     const context = vm.createContext({
         console: console,
+        __dirname: __dirname,
+        __filename: __dirname,
         require: (id: string): any => {
             if (allowedToRequire.indexOf(id) === -1) {
                 return undefined
             }
             return require(id)
         },
-        __dirname: __dirname,
-        __filename: __dirname,
         archive_many_to_one: (
             label: string,
             config: {
