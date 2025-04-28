@@ -14,42 +14,35 @@
  * limitations under the License.
  */
 
+import {globSync} from 'fast-glob'
 import {FileCollector} from './dsl'
 
 export class CollectByGeneration implements FileCollector {
+    private readonly pattern: string[]
     private readonly extra_cond: (f: string) => boolean
     private readonly comparator: (a: string, b: string) => number
     private readonly generation: number
 
     constructor(
-        private readonly pattern: string[],
+        pattern: string[],
         extra_cond?: (f: string) => boolean,
         comparator?: (a: string, b: string) => number,
         generation?: number,
     ) {
+        this.pattern = pattern
         this.extra_cond = extra_cond ?? (() => true)
         this.comparator = comparator ?? ((a, b) => a.localeCompare(b))
         this.generation = generation ?? 0
     }
 
     validate(): boolean {
-        console.log(this.pattern)
-        console.log(this.extra_cond)
-        console.log(this.comparator)
-        console.log(this.generation)
         return true
     }
 
-    collect(time: Date): string[] {
-        console.log({
-            time: time,
+    collect(_: Date): string[] {
+        return this.pattern.flatMap(p => {
+            const l = globSync(p).filter(this.extra_cond).sort(this.comparator)
+            return l.slice(0, l.length - this.generation)
         })
-        console.log({
-            pattern: this.pattern,
-            extra_cond: this.extra_cond,
-            comparator: this.comparator,
-            generation: this.generation,
-        })
-        return []
     }
 }

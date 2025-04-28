@@ -17,6 +17,7 @@
   "dependencies": {
     "commander": "^13.1.0",
     "date-fns": "^4.1.0",
+    "fast-glob": "^3.3.3",
     "winston": "^3.17.0",
     "winston-syslog": "^2.7.1"
   },

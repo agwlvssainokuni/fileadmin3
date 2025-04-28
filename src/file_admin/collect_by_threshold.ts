@@ -15,21 +15,24 @@
  */
 
 import {FileCollector} from './dsl'
-import {lightFormat} from "date-fns";
+import {lightFormat} from 'date-fns'
+import {globSync} from "fast-glob";
 
 export class CollectByThreshold implements FileCollector {
+    private readonly pattern: string[]
     private readonly extra_cond: (f: string) => boolean
     private readonly comparator: (a: string, b: string) => number
     private readonly slicer: (f: string) => string
     private readonly threshold: (time: Date) => string
 
     constructor(
-        private readonly pattern: string[],
+        pattern: string[],
         extra_cond?: (f: string) => boolean,
         comparator?: (a: string, b: string) => number,
         slicer?: (f: string) => string,
         threshold?: (time: Date) => string,
     ) {
+        this.pattern = pattern
         this.extra_cond = extra_cond ?? (() => true)
         this.comparator = comparator ?? ((a, b) => a.localeCompare(b))
         this.slicer = slicer ?? ((f) => f)
@@ -37,25 +40,14 @@ export class CollectByThreshold implements FileCollector {
     }
 
     validate(): boolean {
-        console.log(this.pattern)
-        console.log(this.extra_cond)
-        console.log(this.comparator)
-        console.log(this.slicer)
-        console.log(this.threshold)
         return true
     }
 
     collect(time: Date): string[] {
-        console.log({
-            time: time,
+        const threshold = this.threshold(time)
+        return this.pattern.flatMap(p => {
+            const l = globSync(p).filter(this.extra_cond).sort(this.comparator)
+            return l.filter(p => this.slicer(p).localeCompare(threshold) < 0)
         })
-        console.log({
-            pattern: this.pattern,
-            extra_cond: this.extra_cond,
-            comparator: this.comparator,
-            slicer: this.slicer,
-            threshold: this.threshold,
-        })
-        return []
     }
 }
