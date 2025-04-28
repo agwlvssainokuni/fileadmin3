@@ -14,42 +14,47 @@
  * limitations under the License.
  */
 
+import fs from 'node:fs'
+import path from 'node:path'
 import {FileCollector, FileProcessor} from './dsl'
 
 export class BackupFile implements FileProcessor {
     private readonly logger: any
+    private readonly basedir: string
+    private readonly collector: FileCollector
+    private readonly to_dir: string
 
     constructor(
         label: string,
-        private readonly basedir: string,
-        private readonly collector: FileCollector,
-        private readonly to_dir: string,
+        basedir: string,
+        collector: FileCollector,
+        to_dir: string,
     ) {
         this.logger = {
             label: label,
         }
+        this.basedir = basedir
+        this.collector = collector
+        this.to_dir = to_dir
     }
 
     validate(): boolean {
-        console.log(this.logger)
-        console.log(this.basedir)
-        this.collector.validate()
-        console.log(this.to_dir)
         return true
     }
 
     process(time: Date, dryRun: boolean): boolean {
-        console.log(this.logger)
-        console.log({
-            time: time,
-            dryRun: dryRun,
-        })
-        console.log({
-            basedir: this.basedir,
-            collector: this.collector,
-            to_dir: this.to_dir,
-        })
-        this.collector.collect(time)
+        const to_dir = path.resolve(this.to_dir)
+        const cwd = process.cwd()
+        try {
+            process.chdir(path.resolve(this.basedir))
+            this.collector.collect(time).forEach((file) => {
+                if (!dryRun) {
+                    fs.renameSync(file, to_dir)
+                }
+            })
+        } finally {
+            process.chdir(cwd)
+        }
         return true
     }
 }
