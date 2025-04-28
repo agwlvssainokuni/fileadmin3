@@ -14,39 +14,43 @@
  * limitations under the License.
  */
 
+import fs from 'node:fs'
+import path from 'node:path'
 import {FileCollector, FileProcessor} from './dsl'
 
 export class CleanupFile implements FileProcessor {
     private readonly logger: any
+    private readonly basedir: string
+    private readonly collector: FileCollector
 
     constructor(
         label: string,
-        private readonly basedir: string,
-        private readonly collector: FileCollector,
+        basedir: string,
+        collector: FileCollector,
     ) {
         this.logger = {
             label: label,
         }
+        this.basedir = basedir
+        this.collector = collector
     }
 
     validate(): boolean {
-        console.log(this.logger)
-        console.log(this.basedir)
-        this.collector.validate()
         return true
     }
 
     process(time: Date, dryRun: boolean): boolean {
-        console.log(this.logger)
-        console.log({
-            time: time,
-            dryRun: dryRun,
-        })
-        console.log({
-            basedir: this.basedir,
-            collector: this.collector,
-        })
-        this.collector.collect(time)
+        const cwd = process.cwd()
+        try {
+            process.chdir(path.resolve(this.basedir))
+            this.collector.collect(time).forEach((file) => {
+                if (!dryRun) {
+                    fs.unlinkSync(file)
+                }
+            })
+        } finally {
+            process.chdir(cwd)
+        }
         return true
     }
 }
