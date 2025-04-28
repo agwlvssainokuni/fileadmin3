@@ -31,12 +31,26 @@ export default defineConfig({
         rollupOptions: {
             // https://github.com/vitejs/vite/issues/7821
             external: [
-                "node:events",
-                "node:child_process",
-                "node:path",
-                "node:fs",
-                "node:process",
-                "node:vm",
+                'node:events',
+                'node:child_process',
+                'node:path',
+                'node:fs',
+                'node:process',
+                'node:vm',
+                // for winston
+                'dgram',
+                'net',
+                'tls',
+                'events',
+                'util',
+                'os',
+                'fs',
+                'path',
+                'zlib',
+                'http',
+                'https',
+                'stream',
+                'buffer',
             ],
         }
     }

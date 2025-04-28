@@ -29,6 +29,7 @@ import {
     FileCollector,
     FileProcessor,
 } from './file_admin/dsl'
+import {enableLogging, Logger} from './file_admin/logger'
 
 export const file_admin = (args: string[]): number => {
 
@@ -59,6 +60,11 @@ export const file_admin = (args: string[]): number => {
     console.log('dry-run = ', options.dryRun)
     console.log('syslog = ', options.syslog)
     console.log('console = ', options.console)
+
+    enableLogging({
+        console: options.console,
+        syslog: options.syslog,
+    })
 
     const configurations: FileProcessor[] = []
     const allowedToRequire: string[] = [
@@ -156,6 +162,11 @@ export const file_admin = (args: string[]): number => {
         context.__filename = file
         vm.runInContext(script, context, {filename: file})
     }
+
+    const logger = new Logger('TEST')
+    logger.debug('デバッグ %d %d %d', 1, 2, 3)
+    logger.info('インフォ %s %s %s', 3, 4, 5)
+    logger.error('エラー')
 
     let ok: boolean = true
     if (options.validate) {
