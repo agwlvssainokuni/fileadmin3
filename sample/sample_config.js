@@ -15,39 +15,44 @@
  */
 
 const {basename} = require('path')
+const {addDays, lightFormat} = require('date-fns')
 
-archive_one_to_one("一対一アーカイブ", {
+archive_one_to_one('一対一アーカイブ', {
     basedir: `${__dirname}/0file`,
-    collector: collect_by_generation(
-        "foreach_*.txt",
-        (a) => /_(\d{14})\.txt\z/.match(a)
-    ),
+    collector: collect_by_generation({
+        pattern: ['foreach_*.txt'],
+        extra_cond: (a) => /_(\d{14})\.txt\z/.match(a),
+    }),
     to_dir: `${__dirname}/1arch`,
-    arcname: (a) => basename(a, ".txt") + ".zip",
+    arcname: (a) => `${basename(a, '.txt')}.zip`,
 })
 
-archive_many_to_one("集約アーカイブ", {
+archive_many_to_one('集約アーカイブ', {
     basedir: `${__dirname}/0file`,
-    collector: collect_by_generation(
-        "aggregate_*.txt",
-    ),
+    collector: collect_by_generation({
+        pattern: ['aggregate_*.txt'],
+    }),
     to_dir: `${__dirname}/1arch`,
-    arcname: "aggregate_%Y%m%d%H%M%S.zip",
+    arcname: (time) => `aggregate_${lightFormat(time, 'yyyyMMddHHmmss')}.zip`,
 })
 
-backup_file("退避テスト", {
+backup_file('退避テスト', {
     basedir: `${__dirname}/1arch`,
-    collector: collect_by_threshold(
-        ["foreach_*.zip", "aggregate_*.zip"],
-        (a) => /_(\d{14})\.zip\z/.match(a) ? $1 : null,
-    ),
+    collector: collect_by_threshold({
+        pattern: ['foreach_*.zip', 'aggregate_*.zip'],
+        extra_cond: (a) => /_(\d{14})\.zip\z/.match(a),
+        slicer: (a) => /_(\d{14})\.zip\z/.match(a) ? $1 : null,
+        threshold: (time) => lightFormat(addDays(time, 1), 'yyyyMMddHHmmss'),
+    }),
     to_dir: `${__dirname}/2back`,
 })
 
-cleanup_file("削除テスト", {
+cleanup_file('削除テスト', {
     basedir: `${__dirname}/2back`,
-    collector: collect_by_threshold(
-        ["foreach_*.zip", "aggregate_*.zip"],
-        (a) => /_(\d{14})\.zip\z/.match(a) ? $1 : null,
-    ),
+    collector: collect_by_threshold({
+        pattern: ['foreach_*.zip', 'aggregate_*.zip'],
+        extra_cond: (a) => /_(\d{14})\.zip\z/.match(a),
+        slicer: (a) => /_(\d{14})\.zip\z/.match(a) ? $1 : null,
+        threshold: (time) => lightFormat(addDays(time, 2), 'yyyyMMddHHmmss'),
+    }),
 })
