@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 
-import {file_admin} from "./file_admin.ts";
+import {file_admin} from './file_admin'
 
 file_admin(process.argv)

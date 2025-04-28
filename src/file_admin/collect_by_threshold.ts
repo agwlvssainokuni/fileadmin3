@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import {FileCollector} from './dsl'
+import {globSync} from 'fast-glob'
 import {lightFormat} from 'date-fns'
-import {globSync} from "fast-glob";
+import {FileCollector} from './dsl'
 
 export class CollectByThreshold implements FileCollector {
     private readonly pattern: string[]

@@ -36,6 +36,7 @@ export class CleanupFile implements FileProcessor {
     }
 
     validate(): boolean {
+        console.log(this.logger)
         return true
     }
 
