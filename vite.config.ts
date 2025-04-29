@@ -23,7 +23,7 @@ export default defineConfig({
         lib: {
             entry: './src/index.ts',
             formats: ['es', 'cjs'],
-            fileName: 'node-cli-etude'
+            fileName: 'fileadmin'
         },
         // https://vite.dev/config/build-options.html#build-sourcemap
         sourcemap: true,
