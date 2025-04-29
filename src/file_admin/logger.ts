@@ -17,79 +17,82 @@
 import winston from 'winston'
 import {Syslog} from 'winston-syslog'
 
-export let console_enabled = false
-export let syslog_enabled = false
+export interface SyslogOptions {
+    protocol?: string;
+    path?: string,
+    host?: string,
+    port?: number
+}
+
+let console_enabled = false
+let syslog_enabled = false
+let syslog_options: SyslogOptions = {
+    protocol: 'unix',
+    path: '/dev/log',
+    host: 'localhost',
+    port: 514,
+}
 
 export const enableLogging = (config: {
     console?: boolean,
     syslog?: boolean,
+    syslog_options?: SyslogOptions,
 }) => {
     console_enabled = config.console ?? console_enabled
     syslog_enabled = config.syslog ?? syslog_enabled
+    syslog_options = {...syslog_options, ...config.syslog_options}
 }
 
 export class Logger {
-    private readonly logger: winston.Logger
-    private readonly syslog: winston.Logger
+    private readonly logger?: winston.Logger
 
     constructor(label: string) {
-        this.logger = winston.createLogger({
-            level: 'debug',
-            format: winston.format.combine(
-                winston.format.label({
-                    label: label,
-                    message: true,
-                }),
-                winston.format.splat(),
-                winston.format.cli(),
-            ),
-            transports: [new winston.transports.Console()],
-        })
-        this.syslog = winston.createLogger({
-            level: 'info',
-            format: winston.format.combine(
-                winston.format.label({
-                    label: label,
-                    message: true,
-                }),
-                winston.format.splat(),
-                winston.format.simple(),
-            ),
-            transports: [new Syslog({
-                app_name: 'FILEADMIN',
-                protocol: 'unix',
-                path: '/dev/log',
-            })],
-        })
+        const transports: winston.transport[] = []
+        if (console_enabled) {
+            transports.push(
+                new winston.transports.Console({
+                    level: 'debug',
+                    format: winston.format.cli()
+                })
+            )
+        }
+        if (syslog_enabled) {
+            transports.push(
+                new Syslog({
+                    level: 'info',
+                    format: winston.format.simple(),
+                    app_name: 'FILEADMIN',
+                    ...syslog_options,
+                })
+            )
+        }
+        this.logger = transports.length === 0 ? undefined :
+            winston.createLogger({
+                level: 'debug',
+                format: winston.format.combine(
+                    winston.format.label({
+                        label: label,
+                        message: true,
+                    }),
+                    winston.format.splat(),
+                ),
+                transports: transports,
+            })
     }
 
     debug(message: string, ...args: any[]) {
-        if (console_enabled) {
-            this.logger.debug(message, ...args)
-        }
-        if (syslog_enabled) {
-            this.syslog.debug(message, ...args)
-            console.log(message, ...args)
-        }
+        this.logger?.debug(message, ...args)
     }
 
     info(message: string, ...args: any[]) {
-        if (console_enabled) {
-            this.logger.info(message, ...args)
-        }
-        if (syslog_enabled) {
-            this.syslog.info(message, ...args)
-            console.log(message, ...args)
-        }
+        this.logger?.info(message, ...args)
     }
 
     error(message: string, ...args: any[]) {
-        if (console_enabled) {
-            this.logger.error(message, ...args)
-        }
-        if (syslog_enabled) {
-            this.syslog.error(message, ...args)
-            console.log(message, ...args)
-        }
+        this.logger?.error(message, ...args)
+    }
+
+    close() {
+        this.logger?.close()
     }
 }

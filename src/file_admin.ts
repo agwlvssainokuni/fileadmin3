@@ -167,6 +167,7 @@ export const file_admin = (args: string[]): number => {
     logger.debug('デバッグ %d %d %d', 1, 2, 3)
     logger.info('インフォ %s %s %s', 3, 4, 5)
     logger.error('エラー')
+    logger.close()
 
     let ok: boolean = true
     if (options.validate) {
