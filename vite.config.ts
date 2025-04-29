@@ -51,6 +51,8 @@ export default defineConfig({
                 'https',
                 'stream',
                 'buffer',
+                // for winston-syslog
+                'unix-dgram',   // ネイティブライブラリを含むためバンドルしない
             ],
         }
     }
