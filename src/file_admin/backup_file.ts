@@ -38,23 +38,40 @@ export class BackupFile implements FileProcessor {
     }
 
     validate(): boolean {
-        console.log(this.logger)
         return true
     }
 
     process(time: Date, dryRun: boolean): boolean {
+        this.logger.debug('start')
+
         const to_dir = path.resolve(this.to_dir)
         const cwd = process.cwd()
         try {
             process.chdir(path.resolve(this.basedir))
-            this.collector.collect(time).forEach((file) => {
+            const files = this.collector.collect(time)
+            if (files.length === 0) {
+                this.logger.debug('no files, skipped')
+                return true
+            }
+            for (const file of files) {
+                const to_file = path.join(to_dir, path.basename(file))
+                this.logger.debug('processing: rename %s to %s', file, to_file)
                 if (!dryRun) {
-                    fs.renameSync(file, to_dir)
+                    try {
+                        fs.renameSync(file, to_file)
+                    } catch (e) {
+                        this.logger.error('rename %s to %s: NG, error=%s',
+                            file, to_file, e)
+                        return false
+                    }
                 }
-            })
+                this.logger.info('rename %s to %s: OK', file, to_file)
+            }
         } finally {
             process.chdir(cwd)
         }
+
+        this.logger.debug('end normally')
         return true
     }
 }

@@ -35,22 +35,38 @@ export class CleanupFile implements FileProcessor {
     }
 
     validate(): boolean {
-        console.log(this.logger)
         return true
     }
 
     process(time: Date, dryRun: boolean): boolean {
+        this.logger.debug('start')
+
         const cwd = process.cwd()
         try {
             process.chdir(path.resolve(this.basedir))
-            this.collector.collect(time).forEach((file) => {
+            const files = this.collector.collect(time)
+            if (files.length === 0) {
+                this.logger.debug('no files, skipped')
+                return true
+            }
+            for (const file of files) {
+                this.logger.debug('processing: unlink %s', file)
                 if (!dryRun) {
-                    fs.unlinkSync(file)
+                    try {
+                        fs.unlinkSync(file)
+                    } catch (e) {
+                        this.logger.error('unlink %s NG, error=%s',
+                            file, e)
+                        return false
+                    }
                 }
-            })
+                this.logger.info('unlink %s: OK', file)
+            }
         } finally {
             process.chdir(cwd)
         }
+
+        this.logger.debug('end normally')
         return true
     }
 }
