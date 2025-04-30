@@ -50,17 +50,18 @@ export class CleanupFile implements FileProcessor {
                 return true
             }
             for (const file of files) {
-                this.logger.debug('processing: unlink %s', file)
+                const srcFile = path.resolve(file)
+                this.logger.debug('processing: unlink %s', srcFile)
                 if (!dryRun) {
                     try {
-                        fs.unlinkSync(file)
+                        fs.unlinkSync(srcFile)
                     } catch (e) {
                         this.logger.error('unlink %s NG, error=%s',
-                            file, e)
+                            srcFile, e)
                         return false
                     }
                 }
-                this.logger.info('unlink %s: OK', file)
+                this.logger.info('unlink %s: OK', srcFile)
             }
             this.logger.debug('end normally')
         } finally {

@@ -54,18 +54,19 @@ export class BackupFile implements FileProcessor {
                 return true
             }
             for (const file of files) {
-                const to_file = path.join(to_dir, path.basename(file))
-                this.logger.debug('processing: rename %s to %s', file, to_file)
+                const srcFile = path.resolve(file)
+                const dstFile = path.join(to_dir, path.basename(file))
+                this.logger.debug('processing: rename %s to %s', srcFile, dstFile)
                 if (!dryRun) {
                     try {
-                        fs.renameSync(file, to_file)
+                        fs.renameSync(srcFile, dstFile)
                     } catch (e) {
                         this.logger.error('rename %s to %s: NG, error=%s',
-                            file, to_file, e)
+                            srcFile, dstFile, e)
                         return false
                     }
                 }
-                this.logger.info('rename %s to %s: OK', file, to_file)
+                this.logger.info('rename %s to %s: OK', srcFile, dstFile)
             }
             this.logger.debug('end normally')
         } finally {
