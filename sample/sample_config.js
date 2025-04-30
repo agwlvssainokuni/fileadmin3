@@ -24,7 +24,7 @@ archive_one_to_one('一対一アーカイブ', {
         extra_cond: (a) => /_(\d{14})\.txt\z/.match(a),
     }),
     to_dir: `${__dirname}/1arch`,
-    arcname: (a) => `${basename(a, '.txt')}.zip`,
+    arcname: (a, _) => `${basename(a, '.txt')}.zip`,
 })
 
 archive_many_to_one('集約アーカイブ', {
