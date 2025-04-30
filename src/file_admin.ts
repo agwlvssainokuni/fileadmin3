@@ -29,7 +29,7 @@ import {
     FileCollector,
     FileProcessor,
 } from './file_admin/dsl'
-import {enableLogging} from './file_admin/logger'
+import {enableLogging, Logger} from './file_admin/logger'
 
 export const file_admin = (args: string[]): number => {
 
@@ -57,14 +57,18 @@ export const file_admin = (args: string[]): number => {
         return 0
     }
 
-    // --time 規準日時を設定する。
-    const time = parseTime(options.time, new Date())
-
     // --[no-]console, --[no-]syslog ログ出力設定
     enableLogging({
         console: options.console,
         syslog: options.syslog,
     })
+
+    const logger: Logger = new Logger('file_admin')
+
+    // --time 規準日時を設定する。
+    const time = parseTime(options.time, new Date())
+
+    logger.info('time = %s', time)
 
     // (2) 設定ファイル(DSL)を解析する。
     const configurations: FileProcessor[] = []
@@ -80,6 +84,8 @@ export const file_admin = (args: string[]): number => {
         context.__filename = file
         vm.runInContext(script, context, {filename: file})
     }
+
+    logger.info('configurations = %s', configurations)
 
     // (3) ファイル管理処理実行。
     let ok: boolean = true
@@ -98,6 +104,9 @@ export const file_admin = (args: string[]): number => {
             }
         }
     }
+
+    logger.info('ok = %s', ok)
+    logger.close()
 
     if (ok) {
         return 0
