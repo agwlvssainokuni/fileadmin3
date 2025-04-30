@@ -10,7 +10,7 @@ export declare const archive_many_to_one: (label: string, config: {
     basedir: string;
     collector: FileCollector;
     to_dir: string;
-    arcname: string;
+    arcname: (time: Date) => string;
     options?: {
         owner?: string;
     };
@@ -19,7 +19,7 @@ export declare const archive_one_to_one: (label: string, config: {
     basedir: string;
     collector: any;
     to_dir: string;
-    arcname: (p: string) => string;
+    arcname: (p: string, time: Date) => string;
     options?: {
         owner?: string;
     };

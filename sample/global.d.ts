@@ -11,7 +11,7 @@ global {
         basedir: string;
         collector: FileCollector;
         to_dir: string;
-        arcname: string;
+        arcname: (time: Date) => string;
         options?: {
             owner?: string;
         };
@@ -20,7 +20,7 @@ global {
         basedir: string;
         collector: any;
         to_dir: string;
-        arcname: (p: string) => string;
+        arcname: (p: string, time: Date) => string;
         options?: {
             owner?: string;
         };
