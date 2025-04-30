@@ -21,7 +21,7 @@ archive_one_to_one('一対一アーカイブ', {
     basedir: `${__dirname}/0file`,
     collector: collect_by_generation({
         pattern: ['foreach_*.txt'],
-        extra_cond: (a) => /_(\d{14})\.txt\z/.match(a),
+        extra_cond: (a) => a.match(/_(\d{14})\.txt$/),
     }),
     to_dir: `${__dirname}/1arch`,
     arcname: (a, _) => `${basename(a, '.txt')}.zip`,
@@ -40,8 +40,8 @@ backup_file('退避テスト', {
     basedir: `${__dirname}/1arch`,
     collector: collect_by_threshold({
         pattern: ['foreach_*.zip', 'aggregate_*.zip'],
-        extra_cond: (a) => /_(\d{14})\.zip\z/.match(a),
-        slicer: (a) => /_(\d{14})\.zip\z/.match(a) ? $1 : null,
+        extra_cond: (a) => a.match(/_(\d{14})\.zip$/),
+        slicer: (a) => a.match(/_(\d{14})\.zip$/)?.[1],
         threshold: (time) => lightFormat(addDays(time, -1), 'yyyyMMddHHmmss'),
     }),
     to_dir: `${__dirname}/2back`,
@@ -51,8 +51,8 @@ cleanup_file('削除テスト', {
     basedir: `${__dirname}/2back`,
     collector: collect_by_threshold({
         pattern: ['foreach_*.zip', 'aggregate_*.zip'],
-        extra_cond: (a) => /_(\d{14})\.zip\z/.match(a),
-        slicer: (a) => /_(\d{14})\.zip\z/.match(a) ? $1 : null,
+        extra_cond: (a) => a.match(/_(\d{14})\.zip$/),
+        slicer: (a) => a.match(/_(\d{14})\.zip$/)?.[1],
         threshold: (time) => lightFormat(addDays(time, -2), 'yyyyMMddHHmmss'),
     }),
 })
