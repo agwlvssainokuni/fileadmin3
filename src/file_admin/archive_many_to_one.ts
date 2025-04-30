@@ -42,30 +42,19 @@ export class ArchiveManyToOne implements FileProcessor {
     }
 
     validate(): boolean {
-        console.log(this.logger)
-        console.log(this.basedir)
+        this.logger.info('basedir = %s', this.basedir)
+        this.logger.info('to_dir = %s', this.to_dir)
+        this.logger.info('arcname = %s', this.arcname)
+        this.logger.info('chown = %s', this.chown)
         this.collector.validate()
-        console.log(this.collector)
-        console.log(this.to_dir)
-        console.log(this.arcname)
-        console.log(this.chown)
+        this.logger.close()
         return true
     }
 
     process(time: Date, dryRun: boolean): boolean {
-        console.log(this.logger)
-        console.log({
-            time: time,
-            dryRun: dryRun,
-        })
-        console.log({
-            basedir: this.basedir,
-            collector: this.collector,
-            to_dir: this.to_dir,
-            arcname: this.arcname,
-            chown: this.chown,
-        })
-        this.collector.collect(time)
+        this.logger.info('time = %s', time)
+        this.logger.info('dryRun = %s', dryRun)
+        this.logger.close()
         return true
     }
 }
