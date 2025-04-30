@@ -15,21 +15,30 @@
  */
 
 import {FileCollector, FileProcessor} from './dsl'
+import {Logger} from './logger'
 
 export class ArchiveOneToOne implements FileProcessor {
-    private readonly logger: any
+    private readonly logger: Logger
+    private readonly basedir: string
+    private readonly collector: FileCollector
+    private readonly to_dir: string
+    private readonly arcname: (p: string) => string
+    private readonly chown?: string
 
     constructor(
         label: string,
-        private readonly basedir: string,
-        private readonly collector: FileCollector,
-        private readonly to_dir: string,
-        private readonly arcname: (p: string) => string,
-        private readonly chown?: string,
+        basedir: string,
+        collector: FileCollector,
+        to_dir: string,
+        arcname: (p: string) => string,
+        chown?: string,
     ) {
-        this.logger = {
-            label: label,
-        }
+        this.logger = new Logger(`ONE2ONE[${label}]`)
+        this.basedir = basedir
+        this.collector = collector
+        this.to_dir = to_dir
+        this.arcname = arcname
+        this.chown = chown
     }
 
     validate(): boolean {

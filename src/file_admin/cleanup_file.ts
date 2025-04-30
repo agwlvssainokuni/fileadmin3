@@ -17,9 +17,10 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import {FileCollector, FileProcessor} from './dsl'
+import {Logger} from './logger.ts'
 
 export class CleanupFile implements FileProcessor {
-    private readonly logger: any
+    private readonly logger: Logger
     private readonly basedir: string
     private readonly collector: FileCollector
 
@@ -28,9 +29,7 @@ export class CleanupFile implements FileProcessor {
         basedir: string,
         collector: FileCollector,
     ) {
-        this.logger = {
-            label: label,
-        }
+        this.logger = new Logger(`CLEANUP[${label}]`)
         this.basedir = basedir
         this.collector = collector
     }
