@@ -15,7 +15,7 @@
  */
 
 import {Command} from 'commander'
-import {lightFormat} from 'date-fns'
+import {lightFormat, parse} from 'date-fns'
 import fs from 'node:fs'
 import path from 'node:path'
 import vm from 'node:vm'
@@ -29,10 +29,11 @@ import {
     FileCollector,
     FileProcessor,
 } from './file_admin/dsl'
-import {enableLogging, Logger} from './file_admin/logger'
+import {enableLogging} from './file_admin/logger'
 
 export const file_admin = (args: string[]): number => {
 
+    // (1) コマンドラインオプションを解析する。
     const command = new Command()
     command
         .option('-t, --time <time', '基準日時指定 (省略時: システム日時)',
@@ -49,29 +50,77 @@ export const file_admin = (args: string[]): number => {
         .argument('[設定ファイル...]', '設定ファイル')
         .parse(args)
 
+    // --help ヘルプを表示する。
     const options = command.opts()
     if (options.help) {
         command.outputHelp()
         return 0
     }
 
-    console.log('time = ', options.time)
-    console.log('validate = ', options.validate)
-    console.log('dry-run = ', options.dryRun)
-    console.log('syslog = ', options.syslog)
-    console.log('console = ', options.console)
+    // --time 規準日時を設定する。
+    const time = parseTime(options.time, new Date())
 
+    // --[no-]console, --[no-]syslog ログ出力設定
     enableLogging({
         console: options.console,
         syslog: options.syslog,
     })
 
+    // (2) 設定ファイル(DSL)を解析する。
     const configurations: FileProcessor[] = []
     const allowedToRequire: string[] = [
         'path',
         'date-fns',
     ]
-    const context = vm.createContext({
+    const context = createContext(configurations, allowedToRequire)
+    for (const f of command.args) {
+        const file = path.resolve(f)
+        const script = fs.readFileSync(file, {encoding: 'utf8'})
+        context.__dirname = path.dirname(file)
+        context.__filename = file
+        vm.runInContext(script, context, {filename: file})
+    }
+
+    // (3) ファイル管理処理実行。
+    let ok: boolean = true
+    if (options.validate) {
+        // (3)-1 設定内容のバリデーションを実行する。
+        for (const config of configurations) {
+            if (!config.validate()) {
+                ok = false
+            }
+        }
+    } else {
+        // (3)-2 設定内容に沿ってファイル管理処理を実行する。
+        for (const config of configurations) {
+            if (!config.process(time, options.dryRun)) {
+                ok = false
+            }
+        }
+    }
+
+    if (ok) {
+        return 0
+    } else {
+        return 1
+    }
+}
+
+const parseTime = (time: string, referenceDate: Date = new Date()): Date => {
+    const formats = [
+        'yyyyMMddHHmmss',
+        'yyyyMMddHHmm',
+        'yyyyMMddHH',
+        'yyyyMMdd',
+        'yyMMdd',
+        'MMdd',
+    ]
+    const formatStr = formats.find(f => f.length === time.length)
+    return parse(time, formatStr ?? 'yyyyMMddHHmmss', referenceDate)
+}
+
+const createContext = (configurations: FileProcessor[], allowedToRequire: string[]) =>
+    vm.createContext({
         console: console,
         __dirname: __dirname,
         __filename: __dirname,
@@ -154,39 +203,3 @@ export const file_admin = (args: string[]): number => {
             return collect_by_threshold(config)
         }
     })
-
-    for (const f of command.args) {
-        const file = path.resolve(f)
-        const script = fs.readFileSync(file, {encoding: 'utf8'})
-        context.__dirname = path.dirname(file)
-        context.__filename = file
-        vm.runInContext(script, context, {filename: file})
-    }
-
-    const logger = new Logger('TEST')
-    logger.debug('デバッグ %d %d %d', 1, 2, 3)
-    logger.info('インフォ %s %s %s', 3, 4, 5)
-    logger.error('エラー')
-    logger.close()
-
-    let ok: boolean = true
-    if (options.validate) {
-        for (const config of configurations) {
-            if (!config.validate()) {
-                ok = false
-            }
-        }
-    } else {
-        for (const config of configurations) {
-            if (!config.process(options.time, options.dryRun)) {
-                ok = false
-            }
-        }
-    }
-
-    if (ok) {
-        return 0
-    } else {
-        return 1
-    }
-}
