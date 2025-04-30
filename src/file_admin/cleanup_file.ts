@@ -62,11 +62,12 @@ export class CleanupFile implements FileProcessor {
                 }
                 this.logger.info('unlink %s: OK', file)
             }
+            this.logger.debug('end normally')
         } finally {
+            this.logger.close()
             process.chdir(cwd)
         }
 
-        this.logger.debug('end normally')
         return true
     }
 }

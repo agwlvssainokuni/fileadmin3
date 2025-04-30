@@ -67,11 +67,12 @@ export class BackupFile implements FileProcessor {
                 }
                 this.logger.info('rename %s to %s: OK', file, to_file)
             }
+            this.logger.debug('end normally')
         } finally {
+            this.logger.close()
             process.chdir(cwd)
         }
 
-        this.logger.debug('end normally')
         return true
     }
 }
