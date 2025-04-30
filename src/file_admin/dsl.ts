@@ -57,7 +57,7 @@ export const archive_one_to_one = (
         basedir: string,
         collector: any,
         to_dir: string,
-        arcname: (p: string) => string,
+        arcname: (p: string, time: Date) => string,
         options?: { owner?: string },
     },
 ): FileProcessor => {

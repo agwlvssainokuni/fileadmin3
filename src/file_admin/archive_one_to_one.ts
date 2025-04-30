@@ -22,7 +22,7 @@ export class ArchiveOneToOne implements FileProcessor {
     private readonly basedir: string
     private readonly collector: FileCollector
     private readonly to_dir: string
-    private readonly arcname: (p: string) => string
+    private readonly arcname: (p: string, time: Date) => string
     private readonly chown?: string
 
     constructor(
@@ -30,7 +30,7 @@ export class ArchiveOneToOne implements FileProcessor {
         basedir: string,
         collector: FileCollector,
         to_dir: string,
-        arcname: (p: string) => string,
+        arcname: (p: string, time: Date) => string,
         chown?: string,
     ) {
         this.logger = new Logger(`ONE2ONE[${label}]`)
