@@ -17,7 +17,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import {FileCollector, FileProcessor} from './dsl'
-import {Logger} from './logger.ts'
+import {Logger} from './logger'
 
 export class BackupFile implements FileProcessor {
     private readonly logger: Logger
