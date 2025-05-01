@@ -5,7 +5,7 @@
   "license": "Apache-2.0",
   "type": "commonjs",
   "bin": {
-    "fileadmin": "dist/fileadmin.cjs"
+    "fileadmin": "dist/fileadmin.js"
   },
   "scripts": {
     "build": "tsc --build && vite build",
