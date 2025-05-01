@@ -148,7 +148,7 @@ const createContext = (configurations: FileProcessor[], allowedToRequire: string
                 basedir: string,
                 collector: any,
                 to_dir: string,
-                arcname: (p: string) => string,
+                arcname: (p: string, time: Date) => string,
                 options?: { owner?: number[] | number, retainOriginal?: boolean },
             },
         ): FileProcessor => {
