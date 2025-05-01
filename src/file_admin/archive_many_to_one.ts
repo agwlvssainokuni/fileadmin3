@@ -16,6 +16,7 @@
 
 import fs from 'node:fs'
 import path from 'node:path'
+import AdmZip from 'adm-zip'
 import {FileCollector, FileProcessor} from './dsl'
 import {Logger} from './logger'
 
@@ -26,6 +27,7 @@ export class ArchiveManyToOne implements FileProcessor {
     private readonly to_dir: string
     private readonly arcname: (time: Date) => string
     private readonly chown?: number | number[]
+    private readonly retainOriginal?: boolean
 
     constructor(
         label: string,
@@ -34,6 +36,7 @@ export class ArchiveManyToOne implements FileProcessor {
         to_dir: string,
         arcname: (time: Date) => string,
         chown?: number | number[],
+        retainOriginal?: boolean,
     ) {
         this.logger = new Logger(`MANY2ONE[${label}]`)
         this.basedir = basedir
@@ -41,6 +44,7 @@ export class ArchiveManyToOne implements FileProcessor {
         this.to_dir = to_dir
         this.arcname = arcname
         this.chown = chown
+        this.retainOriginal = retainOriginal
     }
 
     validate(): boolean {
@@ -61,8 +65,38 @@ export class ArchiveManyToOne implements FileProcessor {
             }
 
             const arcfile = path.join(to_dir, this.arcname(time))
+            this.logger.debug('processing: zip %s %s', arcfile, files.join(' '))
+            if (!dryRun) {
+                try {
+                    const zip = new AdmZip()
+                    for (const file of files) {
+                        zip.addLocalFile(file)
+                    }
+                    fs.writeFileSync(arcfile, zip.toBuffer())
+                } catch (e) {
+                    this.logger.error('zip %s %s: NG, error=%s',
+                        arcfile, files.join(' '), e)
+                    return false
+                }
+            }
+            this.logger.info('zip %s %s: OK', arcfile, files.join(' '))
 
-            this.logger.info("zip %s %s: OK", arcfile, files.join(' '))
+            if (!this.retainOriginal) {
+                for (const file of files) {
+                    const target = path.resolve(file)
+                    this.logger.debug('processing: unlink %s', target)
+                    if (!dryRun) {
+                        try {
+                            fs.unlinkSync(target)
+                        } catch (e) {
+                            this.logger.error('unlink %s: NG, error=%s',
+                                target, e)
+                            return false
+                        }
+                    }
+                    this.logger.info('unlink %s: OK', target)
+                }
+            }
 
             if (this.chown) {
                 const {uid, gid} = this.parseChown(this.chown)
