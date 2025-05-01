@@ -53,6 +53,8 @@ export default defineConfig({
                 'buffer',
                 // for winston-syslog
                 'unix-dgram',   // ネイティブライブラリを含むためバンドルしない
+                // for adm-zip
+                'crypto',
             ],
         }
     }

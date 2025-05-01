@@ -146,7 +146,7 @@ const createContext = (configurations: FileProcessor[], allowedToRequire: string
                 collector: FileCollector,
                 to_dir: string,
                 arcname: (time: Date) => string,
-                options?: { owner?: string },
+                options?: { owner?: number[] | number, retainOriginal?: boolean },
             },
         ): FileProcessor => {
             const p = archive_many_to_one(label, config)
@@ -160,7 +160,7 @@ const createContext = (configurations: FileProcessor[], allowedToRequire: string
                 collector: any,
                 to_dir: string,
                 arcname: (p: string) => string,
-                options?: { owner?: string },
+                options?: { owner?: number[] | number, retainOriginal?: boolean },
             },
         ): FileProcessor => {
             const p = archive_one_to_one(label, config)

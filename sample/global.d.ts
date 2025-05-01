@@ -13,7 +13,8 @@ global {
         to_dir: string;
         arcname: (time: Date) => string;
         options?: {
-            owner?: string;
+            chown?: number[] | number;
+            retainOriginal?: boolean;
         };
     }) => FileProcessor;
     export declare const archive_one_to_one: (label: string, config: {
@@ -22,7 +23,8 @@ global {
         to_dir: string;
         arcname: (p: string, time: Date) => string;
         options?: {
-            owner?: string;
+            chown?: number[] | number;
+            retainOriginal?: boolean;
         };
     }) => FileProcessor;
     export declare const backup_file: (label: string, config: {
