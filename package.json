@@ -11,8 +11,7 @@
     "build": "tsc --build && vite build",
     "build.d": "tsc --declaration --esModuleInterop --outDir node_modules/.tmp src/file_admin/dsl.ts && mv node_modules/.tmp/dsl.d.ts dsl/",
     "clean": "rimraf dist",
-    "cleanlib": "rimraf node_modules",
-    "test": "jest"
+    "cleanlib": "rimraf node_modules"
   },
   "dependencies": {
     "adm-zip": "^0.5.16",
