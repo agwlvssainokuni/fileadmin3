@@ -17,4 +17,4 @@
 
 basedir=$(cd $(dirname ${BASH_SOURCE[0]}) && pwd)
 
-cd "${basedir}/.." && node "${basedir}/../dist/fileadmin.cjs" --console $* "${basedir}/sample_config.js"
+cd "${basedir}/.." && node "${basedir}/../dist/fileadmin.js" --console $* "${basedir}/sample_config.js"

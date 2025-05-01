@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "homepage": "https://github.com/agwlvssainokuni/fileadmin3",
   "license": "Apache-2.0",
-  "type": "module",
+  "type": "commonjs",
   "bin": {
     "fileadmin": "dist/fileadmin.cjs"
   },
