@@ -36,7 +36,7 @@ export const file_admin = (args: string[]): number => {
     // (1) コマンドラインオプションを解析する。
     const command = new Command()
     command
-        .option('-t, --time <time', '基準日時指定 (省略時: システム日時)',
+        .option('-t, --time <time>', '基準日時指定 (省略時: システム日時)',
             lightFormat(new Date(), 'yyyyMMddHHmmss'))
         .option('-v, --validate', '設定チェックする', false)
         .option('--no-validate', '設定チェックなし')

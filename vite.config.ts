@@ -37,6 +37,7 @@ export default defineConfig({
                 'node:fs',
                 'node:process',
                 'node:vm',
+                'node:os',
                 // for winston
                 'dgram',
                 'net',

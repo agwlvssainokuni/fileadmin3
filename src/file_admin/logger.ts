@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import os from 'node:os'
 import winston from 'winston'
 import {Syslog} from 'winston-syslog'
 
@@ -28,7 +29,7 @@ let console_enabled = false
 let syslog_enabled = false
 let syslog_options: SyslogOptions = {
     protocol: 'unix',
-    path: '/dev/log',
+    path: os.type() === 'Darwin' ? '/var/run/syslog' : '/dev/log',
     host: 'localhost',
     port: 514,
 }
