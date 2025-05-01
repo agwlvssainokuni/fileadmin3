@@ -39,15 +39,13 @@ export const file_admin = (args: string[]): number => {
         .option('-t, --time <time>', '基準日時指定 (省略時: システム日時)',
             lightFormat(new Date(), 'yyyyMMddHHmmss'))
         .option('-v, --validate', '設定チェックする', false)
-        .option('--no-validate', '設定チェックなし')
         .option('-d, --dry-run', 'ドライランする', false)
-        .option('--no-dry-run', 'ドライランなし')
         .option('-s, --syslog', 'SYSLOG出力する', true)
         .option('--no-syslog', 'SYSLOG出力しない')
         .option('-c, --console', 'コンソール出力する', false)
         .option('--no-console', 'コンソール出力しない')
         .option('-h, --help', 'ヘルプを表示する', false)
-        .argument('[設定ファイル...]', '設定ファイル')
+        .argument('[file...]', '設定ファイル(DSLで記述)')
         .parse(args)
 
     // --help ヘルプを表示する。
