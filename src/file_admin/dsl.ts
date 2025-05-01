@@ -38,7 +38,7 @@ export const archive_many_to_one = (
         collector: FileCollector,
         to_dir: string,
         arcname: (time: Date) => string,
-        options?: { owner?: string },
+        options?: { chown?: number | number[] },
     },
 ): FileProcessor => {
     return new ArchiveManyToOne(
@@ -47,7 +47,7 @@ export const archive_many_to_one = (
         config.collector,
         config.to_dir,
         config.arcname,
-        config.options?.owner,
+        config.options?.chown,
     )
 }
 
@@ -58,7 +58,7 @@ export const archive_one_to_one = (
         collector: any,
         to_dir: string,
         arcname: (p: string, time: Date) => string,
-        options?: { owner?: string },
+        options?: { chown?: number | number[] },
     },
 ): FileProcessor => {
     return new ArchiveOneToOne(
@@ -67,7 +67,7 @@ export const archive_one_to_one = (
         config.collector,
         config.to_dir,
         config.arcname,
-        config.options?.owner,
+        config.options?.chown,
     )
 }
 

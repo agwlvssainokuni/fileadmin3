@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import fs from 'node:fs'
+import path from 'node:path'
 import {FileCollector, FileProcessor} from './dsl'
 import {Logger} from './logger'
 
@@ -23,7 +25,7 @@ export class ArchiveOneToOne implements FileProcessor {
     private readonly collector: FileCollector
     private readonly to_dir: string
     private readonly arcname: (p: string, time: Date) => string
-    private readonly chown?: string
+    private readonly chown?: number | number[]
 
     constructor(
         label: string,
@@ -31,7 +33,7 @@ export class ArchiveOneToOne implements FileProcessor {
         collector: FileCollector,
         to_dir: string,
         arcname: (p: string, time: Date) => string,
-        chown?: string,
+        chown?: number | number[],
     ) {
         this.logger = new Logger(`ONE2ONE[${label}]`)
         this.basedir = basedir
@@ -42,19 +44,64 @@ export class ArchiveOneToOne implements FileProcessor {
     }
 
     validate(): boolean {
-        this.logger.info('basedir = %s', this.basedir)
-        this.logger.info('to_dir = %s', this.to_dir)
-        this.logger.info('arcname = %s', this.arcname)
-        this.logger.info('chown = %s', this.chown)
-        this.collector.validate()
-        this.logger.close()
         return true
     }
 
     process(time: Date, dryRun: boolean): boolean {
-        this.logger.info('time = %s', time)
-        this.logger.info('dryRun = %s', dryRun)
-        this.logger.close()
+        this.logger.debug('start')
+
+        const to_dir = path.resolve(this.to_dir)
+        const cwd = process.cwd()
+        try {
+            process.chdir(path.resolve(this.basedir))
+            const files = this.collector.collect(time)
+            if (files.length === 0) {
+                this.logger.debug('no files, skipped')
+                return true
+            }
+
+            for (const file of files) {
+
+                const arcfile = path.join(to_dir, this.arcname(file, time))
+
+                this.logger.info("zip %s %s: OK", arcfile, file)
+
+                if (this.chown) {
+                    const {uid, gid} = this.parseChown(this.chown)
+                    this.logger.debug('processing: chown %d:%d %s', uid, gid, arcfile)
+                    if (!dryRun) {
+                        try {
+                            fs.chownSync(arcfile, uid, gid)
+                        } catch (e) {
+                            this.logger.error('chown %d:%d %s: NG, error=%s',
+                                uid, gid, arcfile, e)
+                            return false
+                        }
+                    }
+                }
+            }
+
+            this.logger.debug('end normally')
+        } finally {
+            this.logger.close()
+            process.chdir(cwd)
+        }
+
         return true
+    }
+
+    private parseChown = (chown: number[] | number): { uid: number, gid: number } => {
+        if (this.chown instanceof Array) {
+            return {
+                uid: (chown as number[])[0] ?? -1,
+                gid: (chown as number[])[1] ?? -1,
+
+            }
+        } else {
+            return {
+                uid: chown as number,
+                gid: -1,
+            }
+        }
     }
 }
