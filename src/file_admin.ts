@@ -120,8 +120,8 @@ const parseTime = (time: string, referenceDate: Date = new Date()): Date => {
 const createContext = (configurations: FileProcessor[], allowedToRequire: string[]) =>
     vm.createContext({
         console: console,
-        __dirname: __dirname,
-        __filename: __dirname,
+        __dirname: '',
+        __filename: '',
         require: (id: string): any => {
             if (allowedToRequire.indexOf(id) === -1) {
                 return undefined
