@@ -21,6 +21,6 @@ mkdir -p ${basedir}/0file
 mkdir -p ${basedir}/1arch
 mkdir -p ${basedir}/2back
 
-touch ${basedir}/0file/foreach_$(date +%Y%m%d%H%M%S).txt
-touch ${basedir}/0file/aggregate_1.txt
-touch ${basedir}/0file/aggregate_2.txt
+dd if=/dev/urandom count=1 | base64 -w 76 > ${basedir}/0file/foreach_$(date +%Y%m%d%H%M%S).txt
+dd if=/dev/urandom count=1 | base64 -w 76 >  ${basedir}/0file/aggregate_1.txt
+dd if=/dev/urandom count=1 | base64 -w 76 >  ${basedir}/0file/aggregate_2.txt
