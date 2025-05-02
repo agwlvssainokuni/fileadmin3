@@ -68,7 +68,7 @@ export declare const backup_file: (label: string, config: {
 ファイルを削除する。
 ```TypeScript
 export declare const cleanup_file: (label: string, config: {
-    basedir: string;                // 削除するファイルの収集条件。
+    basedir: string;                // 処理の基点ディレクトリ。
     collector: FileCollector;       // 削除するファイルの収集条件。
 }) => FileProcessor;
 ```
