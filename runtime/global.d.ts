@@ -19,7 +19,7 @@ global {
     }) => FileProcessor;
     export declare const archive_one_to_one: (label: string, config: {
         basedir: string;
-        collector: any;
+        collector: FileCollector;
         to_dir: string;
         arcname: (p: string, time: Date) => string;
         options?: {
@@ -29,12 +29,12 @@ global {
     }) => FileProcessor;
     export declare const backup_file: (label: string, config: {
         basedir: string;
-        collector: any;
+        collector: FileCollector;
         to_dir: string;
     }) => FileProcessor;
     export declare const cleanup_file: (label: string, config: {
         basedir: string;
-        collector: any;
+        collector: FileCollector;
     }) => FileProcessor;
     export declare const collect_by_generation: (config: {
         pattern: string[];

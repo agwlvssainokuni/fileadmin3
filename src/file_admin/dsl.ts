@@ -56,7 +56,7 @@ export const archive_one_to_one = (
     label: string,
     config: {
         basedir: string,
-        collector: any,
+        collector: FileCollector,
         to_dir: string,
         arcname: (p: string, time: Date) => string,
         options?: { chown?: number[] | number, retainOriginal?: boolean },
@@ -77,7 +77,7 @@ export const backup_file = (
     label: string,
     config: {
         basedir: string,
-        collector: any,
+        collector: FileCollector,
         to_dir: string,
     },
 ): FileProcessor => {
@@ -93,7 +93,7 @@ export const cleanup_file = (
     label: string,
     config: {
         basedir: string,
-        collector: any,
+        collector: FileCollector,
     },
 ): FileProcessor => {
     return new CleanupFile(
