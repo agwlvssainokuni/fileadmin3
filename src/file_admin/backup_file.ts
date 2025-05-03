@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import fs from 'node:fs'
-import path from 'node:path'
+import {renameSync} from 'fs'
+import {basename, join, resolve} from 'path'
 import {FileCollector, FileProcessor} from './dsl'
 import {Logger} from './logger'
 
@@ -44,22 +44,22 @@ export class BackupFile implements FileProcessor {
     process(time: Date, dryRun: boolean): boolean {
         this.logger.debug('start')
 
-        const to_dir = path.resolve(this.to_dir)
+        const to_dir = resolve(this.to_dir)
         const cwd = process.cwd()
         try {
-            process.chdir(path.resolve(this.basedir))
+            process.chdir(resolve(this.basedir))
             const files = this.collector.collect(time)
             if (files.length === 0) {
                 this.logger.debug('no files, skipped')
                 return true
             }
             for (const file of files) {
-                const srcFile = path.resolve(file)
-                const dstFile = path.join(to_dir, path.basename(file))
+                const srcFile = resolve(file)
+                const dstFile = join(to_dir, basename(file))
                 this.logger.debug('processing: rename %s to %s', srcFile, dstFile)
                 if (!dryRun) {
                     try {
-                        fs.renameSync(srcFile, dstFile)
+                        renameSync(srcFile, dstFile)
                     } catch (e) {
                         this.logger.error('rename %s to %s: NG, error=%s',
                             srcFile, dstFile, e)
