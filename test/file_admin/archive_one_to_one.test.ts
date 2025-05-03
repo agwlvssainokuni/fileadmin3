@@ -86,7 +86,7 @@ describe('ArchiveOneToOne', () => {
     it('process should not delete originals in retainOriginal mode', () => {
         // 事前条件
         const collector: FileCollector = {
-            collect: () => ['file1.log'],
+            collect: () => ['file1.log', 'file2.log'],
         }
         const instance = new ArchiveOneToOne(
             'test-label',
@@ -94,7 +94,7 @@ describe('ArchiveOneToOne', () => {
             collector,
             './archive',
             (file) => `${file}.zip`,
-            undefined,
+            [1234, 5678],
             true
         )
 
@@ -103,13 +103,18 @@ describe('ArchiveOneToOne', () => {
 
         // 検証
         expect(result).toBe(true)
+        expect(MockAdmZip).toHaveBeenCalled()
+        expect(mockAddLocalFile).toHaveBeenCalled()
+        expect(mockToBuffer).toHaveBeenCalled()
+        expect(mockWriteFileSync).toHaveBeenCalled()
         expect(mockUnlinkSync).not.toHaveBeenCalled()
+        expect(mockChownSync).toHaveBeenCalled()
     })
 
     it('process should handle dryRun mode without making changes', () => {
         // 事前条件
         const collector: FileCollector = {
-            collect: () => ['file1.log'],
+            collect: () => ['file1.log', 'file2.log'],
         }
         const instance = new ArchiveOneToOne(
             'test-label',
@@ -127,6 +132,8 @@ describe('ArchiveOneToOne', () => {
         // 検証
         expect(result).toBe(true)
         expect(MockAdmZip).not.toHaveBeenCalled()
+        expect(mockAddLocalFile).not.toHaveBeenCalled()
+        expect(mockToBuffer).not.toHaveBeenCalled()
         expect(mockWriteFileSync).not.toHaveBeenCalled()
         expect(mockUnlinkSync).not.toHaveBeenCalled()
         expect(mockChownSync).not.toHaveBeenCalled()
@@ -138,14 +145,16 @@ describe('ArchiveOneToOne', () => {
             throw new Error('write error')
         })
         const collector: FileCollector = {
-            collect: () => ['file1.log'],
+            collect: () => ['file1.log', 'file2.log'],
         }
         const instance = new ArchiveOneToOne(
             'test-label',
             '.',
             collector,
             './archive',
-            (file) => `${file}.zip`
+            (file) => `${file}.zip`,
+            [1234, 5678],
+            false
         )
 
         // 実行
@@ -153,6 +162,11 @@ describe('ArchiveOneToOne', () => {
 
         // 検証
         expect(result).toBe(false)
+        expect(MockAdmZip).toHaveBeenCalled()
+        expect(mockAddLocalFile).toHaveBeenCalled()
+        expect(mockToBuffer).toHaveBeenCalled()
         expect(mockWriteFileSync).toHaveBeenCalled()
+        expect(mockUnlinkSync).not.toHaveBeenCalled()
+        expect(mockChownSync).not.toHaveBeenCalled()
     })
 })

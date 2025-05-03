@@ -82,7 +82,7 @@ describe('ArchiveManyToOne', () => {
     it('process should not delete originals in retainOriginal mode', () => {
         // 事前条件
         const collector: FileCollector = {
-            collect: () => ['file1.log'],
+            collect: () => ['file1.log', 'file2.log'],
         }
         const instance = new ArchiveManyToOne(
             'test-label',
@@ -90,22 +90,28 @@ describe('ArchiveManyToOne', () => {
             collector,
             './archive',
             (time) => `archive-${time.toISOString()}.zip`,
-            undefined,
+            [1234, 5678],
             true
         )
 
         // 実行
-        const result = instance.process(new Date(), false)
+        const time = new Date()
+        const result = instance.process(time, false)
 
         // 検証
         expect(result).toBe(true)
+        expect(MockAdmZip).toHaveBeenCalled()
+        expect(mockAddLocalFile).toHaveBeenCalled()
+        expect(mockToBuffer).toHaveBeenCalled()
+        expect(mockWriteFileSync).toHaveBeenCalled()
         expect(mockUnlinkSync).not.toHaveBeenCalled()
+        expect(mockChownSync).toHaveBeenCalled()
     })
 
     it('process should handle dryRun mode without making changes', () => {
         // 事前条件
         const collector: FileCollector = {
-            collect: () => ['file1.log'],
+            collect: () => ['file1.log', 'file2.log'],
         }
         const instance = new ArchiveManyToOne(
             'test-label',
@@ -118,11 +124,14 @@ describe('ArchiveManyToOne', () => {
         )
 
         // 実行
-        const result = instance.process(new Date(), true)
+        const time = new Date()
+        const result = instance.process(time, true)
 
         // 検証
         expect(result).toBe(true)
         expect(MockAdmZip).not.toHaveBeenCalled()
+        expect(mockAddLocalFile).not.toHaveBeenCalled()
+        expect(mockToBuffer).not.toHaveBeenCalled()
         expect(mockWriteFileSync).not.toHaveBeenCalled()
         expect(mockUnlinkSync).not.toHaveBeenCalled()
         expect(mockChownSync).not.toHaveBeenCalled()
@@ -134,21 +143,29 @@ describe('ArchiveManyToOne', () => {
             throw new Error('write error')
         })
         const collector: FileCollector = {
-            collect: () => ['file1.log'],
+            collect: () => ['file1.log', 'file2.log'],
         }
         const instance = new ArchiveManyToOne(
             'test-label',
             '.',
             collector,
             './archive',
-            (time) => `archive-${time.toISOString()}.zip`
+            (time) => `archive-${time.toISOString()}.zip`,
+            [1234, 5678],
+            false
         )
 
         // 実行
-        const result = instance.process(new Date(), false)
+        const time = new Date()
+        const result = instance.process(time, false)
 
         // 検証
         expect(result).toBe(false)
+        expect(MockAdmZip).toHaveBeenCalled()
+        expect(mockAddLocalFile).toHaveBeenCalled()
+        expect(mockToBuffer).toHaveBeenCalled()
         expect(mockWriteFileSync).toHaveBeenCalled()
+        expect(mockUnlinkSync).not.toHaveBeenCalled()
+        expect(mockChownSync).not.toHaveBeenCalled()
     })
 })
