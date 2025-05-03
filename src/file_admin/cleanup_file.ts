@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import fs from 'node:fs'
-import path from 'node:path'
+import {unlinkSync} from 'fs'
+import {resolve} from 'path'
 import {FileCollector, FileProcessor} from './dsl'
 import {Logger} from './logger'
 
@@ -43,18 +43,18 @@ export class CleanupFile implements FileProcessor {
 
         const cwd = process.cwd()
         try {
-            process.chdir(path.resolve(this.basedir))
+            process.chdir(resolve(this.basedir))
             const files = this.collector.collect(time)
             if (files.length === 0) {
                 this.logger.debug('no files, skipped')
                 return true
             }
             for (const file of files) {
-                const srcFile = path.resolve(file)
+                const srcFile = resolve(file)
                 this.logger.debug('processing: unlink %s', srcFile)
                 if (!dryRun) {
                     try {
-                        fs.unlinkSync(srcFile)
+                        unlinkSync(srcFile)
                     } catch (e) {
                         this.logger.error('unlink %s NG, error=%s',
                             srcFile, e)
