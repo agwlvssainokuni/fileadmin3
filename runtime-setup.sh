@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -xe
 #
 #  Copyright 2025 agwlvssainokuni
 #
@@ -17,5 +17,14 @@
 
 basedir=$(cd $(dirname ${BASH_SOURCE[0]}) && pwd)
 
-sed -e 's/^export //' \
-    "${basedir}/src/file_admin/dsl.d.ts" > "${basedir}/runtime/global.d.ts"
+# (1) ビルド
+npm install
+npm run build
+npm run build.d
+
+# (2) 実行ファイルをコピー
+cp -p "${basedir}/dist/fileadmin.js" "${basedir}/runtime/"
+chmod +x "${basedir}/runtime/fileadmin.js"
+
+# (3) 型定義ファイルをコピー
+sed -e 's/^export //' "${basedir}/src/file_admin/dsl.d.ts" > "${basedir}/runtime/global.d.ts"
