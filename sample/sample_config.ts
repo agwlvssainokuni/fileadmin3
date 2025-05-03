@@ -20,7 +20,7 @@ import {addDays, lightFormat} from 'date-fns'
 archive_one_to_one('一対一アーカイブ', {
     basedir: `${__dirname}/0file`,
     collector: collect_by_generation({
-        pattern: ['foreach_*.txt'],
+        pattern: ['**/foreach_*.txt'],
         extra_cond: (a) => !!a.match(/_(\d{14})\.txt$/),
     }),
     to_dir: `${__dirname}/1arch`,
@@ -30,7 +30,7 @@ archive_one_to_one('一対一アーカイブ', {
 archive_many_to_one('集約アーカイブ', {
     basedir: `${__dirname}/0file`,
     collector: collect_by_generation({
-        pattern: ['aggregate_*.txt'],
+        pattern: ['**/aggregate_*.txt'],
     }),
     to_dir: `${__dirname}/1arch`,
     arcname: (time) => `aggregate_${lightFormat(time, 'yyyyMMddHHmmss')}.zip`,

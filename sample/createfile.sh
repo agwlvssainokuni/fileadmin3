@@ -17,10 +17,12 @@
 
 basedir=$(dirname ${BASH_SOURCE[0]})
 
-mkdir -p ${basedir}/0file
+mkdir -p ${basedir}/0file/aaa
+mkdir -p ${basedir}/0file/bbb
 mkdir -p ${basedir}/1arch
 mkdir -p ${basedir}/2back
 
-dd if=/dev/urandom count=1 | base64 -w 76 > ${basedir}/0file/foreach_$(date +%Y%m%d%H%M%S).txt
+dd if=/dev/urandom count=1 | base64 -w 76 > ${basedir}/0file/aaa/foreach_$(date +%Y%m%d%H%M%S).txt
 dd if=/dev/urandom count=1 | base64 -w 76 >  ${basedir}/0file/aggregate_1.txt
-dd if=/dev/urandom count=1 | base64 -w 76 >  ${basedir}/0file/aggregate_2.txt
+dd if=/dev/urandom count=1 | base64 -w 76 >  ${basedir}/0file/aaa/aggregate_2.txt
+dd if=/dev/urandom count=1 | base64 -w 76 >  ${basedir}/0file/bbb/aggregate_3.txt
