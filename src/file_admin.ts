@@ -16,8 +16,8 @@
 
 import {Command} from 'commander'
 import {lightFormat, parse} from 'date-fns'
-import fs from 'node:fs'
-import path from 'node:path'
+import {readFileSync} from 'fs'
+import {dirname, resolve} from 'path'
 import vm from 'node:vm'
 import {
     archive_many_to_one,
@@ -72,9 +72,9 @@ export const file_admin = (args: string[]): number => {
     ]
     const context = createContext(configurations, allowedToRequire)
     for (const f of command.args) {
-        const file = path.resolve(f)
-        const script = fs.readFileSync(file, {encoding: 'utf8'})
-        context.__dirname = path.dirname(file)
+        const file = resolve(f)
+        const script = readFileSync(file, {encoding: 'utf8'})
+        context.__dirname = dirname(file)
         context.__filename = file
         vm.runInContext(script, context, {filename: file})
     }
