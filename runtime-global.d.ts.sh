@@ -17,9 +17,5 @@
 
 basedir=$(cd $(dirname ${BASH_SOURCE[0]}) && pwd)
 
-awk -f <(cat <<'__END_OF_AWK__'
-BEGIN { printf "global {\n"}
-{ printf "    %s\n", $0; }
-END { printf "}\n"}
-__END_OF_AWK__
-) "${basedir}/src/file_admin/dsl.d.ts" > "${basedir}/runtime/global.d.ts"
+sed -e 's/^export //' \
+    "${basedir}/src/file_admin/dsl.d.ts" > "${basedir}/runtime/global.d.ts"
