@@ -23,11 +23,9 @@ import {FileCollector} from '../../src/file_admin/dsl'
 
 vi.mock('fs')
 vi.mock('adm-zip', () => ({
-    default: vi.fn().mockImplementation(() => {
-        return {
-            addLocalFile: vi.fn(),
-            toBuffer: vi.fn(() => Buffer.from('mock-zip-content')),
-        }
+    default: vi.fn().mockReturnValue({
+        addLocalFile: vi.fn(),
+        toBuffer: vi.fn(() => Buffer.from('mock-zip-content')),
     }),
 }))
 const mockWriteFileSync = vi.mocked(writeFileSync)
