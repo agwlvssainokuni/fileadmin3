@@ -103,12 +103,12 @@ describe('ArchiveOneToOne', () => {
 
         // 検証
         expect(result).toBe(true)
-        expect(MockAdmZip).toHaveBeenCalled()
-        expect(mockAddLocalFile).toHaveBeenCalled()
-        expect(mockToBuffer).toHaveBeenCalled()
-        expect(mockWriteFileSync).toHaveBeenCalled()
+        expect(MockAdmZip).toHaveBeenCalledTimes(2)
+        expect(mockAddLocalFile).toHaveBeenCalledTimes(2)
+        expect(mockToBuffer).toHaveBeenCalledTimes(2)
+        expect(mockWriteFileSync).toHaveBeenCalledTimes(2)
         expect(mockUnlinkSync).not.toHaveBeenCalled()
-        expect(mockChownSync).toHaveBeenCalled()
+        expect(mockChownSync).toHaveBeenCalledTimes(2)
     })
 
     it('process should handle dryRun mode without making changes', () => {
@@ -162,10 +162,10 @@ describe('ArchiveOneToOne', () => {
 
         // 検証
         expect(result).toBe(false)
-        expect(MockAdmZip).toHaveBeenCalled()
-        expect(mockAddLocalFile).toHaveBeenCalled()
-        expect(mockToBuffer).toHaveBeenCalled()
-        expect(mockWriteFileSync).toHaveBeenCalled()
+        expect(MockAdmZip).toHaveBeenCalledTimes(1)
+        expect(mockAddLocalFile).toHaveBeenCalledTimes(1)
+        expect(mockToBuffer).toHaveBeenCalledTimes(1)
+        expect(mockWriteFileSync).toHaveBeenCalledTimes(1)
         expect(mockUnlinkSync).not.toHaveBeenCalled()
         expect(mockChownSync).not.toHaveBeenCalled()
     })
