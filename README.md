@@ -93,3 +93,35 @@ export declare const collect_by_threshold: (config: {
     threshold: (time: Date) => string;  // 実行日時から閾値文字列を生成する。この閾値文字列よりも小(<)のものを対象とする (古いものを抽出)。
 }) => FileCollector;
 ```
+
+# ランタイム構成
+設定ファイル(DSL)の作成およびファイル管理機能の実行に必要なランタイム構成を runtime/ 配下に用意。
+
+## 内訳
+* ファイル管理機能の実行
+  * fileadmin.js
+  * package.json
+    * 実行時に使用するライブラリを dependencies として指定。
+* 設定ファイル(DSL)の作成
+  * package.json
+    * 設定ファイル(DSL)の作成時に使用するライブラリを devDependencies として指定。
+  * global.d.ts
+    * 設定ファイル(DSL)を TypeScript で記述する際に参照する型定義。
+  * tsconfig.json
+    * TypeScript で記述した設定ファイル(DSL)を CommonJS へコンパイルするための設定。
+
+## 依存ライブラリ
+ランタイム構成の依存ライブラリとして以下を設定。
+* dependencies
+  * unix-dgram
+    * winston-syslog の推移的依存ライブラリ。
+    * ネイティブモジュール (unix_dgram.node) はバンドルできないため external として用意する。
+  * date-fns
+    * 設定ファイル(DSL)で使用できる日時文字列操作ライブラリ。
+* devDependencies
+  * typescript
+    * TypeScript コンパイラ。
+    * TypeScript で記述した設定ファイル(DSL)を CommonJS へコンパイルする。
+  * @types/node
+    * Node.js の型定義。
+    * 設定ファイル(DSL)を TypeScript で記述する際に参照する型定義。

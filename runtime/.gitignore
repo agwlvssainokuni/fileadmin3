@@ -1,2 +1,12 @@
+# 依存ライブラリ
 /node_modules/
 package-lock.json
+
+# 設定ファイル(DSL)
+*.ts
+*.js
+*.js.map
+
+# ランタイムの構成ファイル
+!fileadmin.js
+!global.d.ts
