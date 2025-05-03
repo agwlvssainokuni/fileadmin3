@@ -73,7 +73,7 @@ describe('file_admin', () => {
     it('--helpオプション', () => {
         const mockArgs = ['node', 'fileadmin.js', '--help']
         const result = file_admin(mockArgs)
-        expect(result).toBe(0)
+        expect(result).toBeTruthy()
     })
 
     describe('DSLスクリプトの読み込み', () => {
@@ -87,7 +87,7 @@ describe('file_admin', () => {
             const result = file_admin(mockArgs)
 
             // 検証
-            expect(result).toBe(0)
+            expect(result).toBeTruthy()
             expect(readFileSync).toHaveBeenCalledTimes(1)
             expect(readFileSync).toHaveBeenCalledWith(resolve('test1.dsl'), {encoding: 'utf8'})
             expect(mockArchiveManyToOne).toHaveBeenCalledTimes(1)
@@ -111,7 +111,7 @@ describe('file_admin', () => {
             const result = file_admin(mockArgs)
 
             // 検証
-            expect(result).toBe(0)
+            expect(result).toBeTruthy()
             expect(readFileSync).toHaveBeenCalledTimes(1)
             expect(readFileSync).toHaveBeenCalledWith(resolve('test2.dsl'), {encoding: 'utf8'})
             expect(mockArchiveManyToOne).not.toHaveBeenCalled()
@@ -135,7 +135,7 @@ describe('file_admin', () => {
             const result = file_admin(mockArgs)
 
             // 検証
-            expect(result).toBe(0)
+            expect(result).toBeTruthy()
             expect(readFileSync).toHaveBeenCalledTimes(1)
             expect(readFileSync).toHaveBeenCalledWith(resolve('test3.dsl'), {encoding: 'utf8'})
             expect(mockArchiveManyToOne).not.toHaveBeenCalled()
@@ -159,7 +159,7 @@ describe('file_admin', () => {
             const result = file_admin(mockArgs)
 
             // 検証
-            expect(result).toBe(0)
+            expect(result).toBeTruthy()
             expect(readFileSync).toHaveBeenCalledTimes(1)
             expect(readFileSync).toHaveBeenCalledWith(resolve('test4.dsl'), {encoding: 'utf8'})
             expect(mockArchiveManyToOne).not.toHaveBeenCalled()
@@ -189,7 +189,7 @@ describe('file_admin', () => {
             const result = file_admin(mockArgs)
 
             // 検証
-            expect(result).toBe(0)
+            expect(result).toBeTruthy()
             expect(mockArchiveManyToOneProsess).toHaveBeenCalledTimes(1)
             expect(mockArchiveOneToOne).toHaveBeenCalledTimes(1)
             expect(mockBackupFileProcess).toHaveBeenCalledTimes(1)
@@ -207,7 +207,7 @@ describe('file_admin', () => {
             const result = file_admin(mockArgs)
 
             // 検証
-            expect(result).toBe(1)
+            expect(result).toBeFalsy()
             expect(mockArchiveManyToOneProsess).toHaveBeenCalledTimes(1)
             expect(mockArchiveOneToOne).toHaveBeenCalledTimes(1)
             expect(mockBackupFileProcess).toHaveBeenCalledTimes(1)
@@ -225,7 +225,7 @@ describe('file_admin', () => {
             const result = file_admin(mockArgs)
 
             // 検証
-            expect(result).toBe(1)
+            expect(result).toBeFalsy()
             expect(mockArchiveManyToOneProsess).toHaveBeenCalledTimes(1)
             expect(mockArchiveOneToOne).toHaveBeenCalledTimes(1)
             expect(mockBackupFileProcess).toHaveBeenCalledTimes(1)
@@ -243,7 +243,7 @@ describe('file_admin', () => {
             const result = file_admin(mockArgs)
 
             // 検証
-            expect(result).toBe(1)
+            expect(result).toBeFalsy()
             expect(mockArchiveManyToOneProsess).toHaveBeenCalledTimes(1)
             expect(mockArchiveOneToOne).toHaveBeenCalledTimes(1)
             expect(mockBackupFileProcess).toHaveBeenCalledTimes(1)
@@ -261,7 +261,7 @@ describe('file_admin', () => {
             const result = file_admin(mockArgs)
 
             // 検証
-            expect(result).toBe(1)
+            expect(result).toBeFalsy()
             expect(mockArchiveManyToOneProsess).toHaveBeenCalledTimes(1)
             expect(mockArchiveOneToOne).toHaveBeenCalledTimes(1)
             expect(mockBackupFileProcess).toHaveBeenCalledTimes(1)

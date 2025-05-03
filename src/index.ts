@@ -17,4 +17,9 @@
 
 import {file_admin} from './file_admin'
 
-file_admin(process.argv)
+const result = file_admin(process.argv)
+if (result) {
+    process.exitCode = 0
+} else {
+    process.exitCode = 1
+}

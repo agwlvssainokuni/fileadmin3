@@ -31,7 +31,7 @@ import {
 } from './file_admin/dsl'
 import {enableLogging} from './file_admin/logger'
 
-export const file_admin = (args: string[]): number => {
+export const file_admin = (args: string[]): boolean => {
 
     // (1) コマンドラインオプションを解析する。
     const command = new Command()
@@ -51,7 +51,7 @@ export const file_admin = (args: string[]): number => {
     const options = command.opts()
     if (options.help) {
         command.outputHelp()
-        return 0
+        return true
     }
 
     // --[no-]console, --[no-]syslog ログ出力設定
@@ -86,11 +86,7 @@ export const file_admin = (args: string[]): number => {
         }
     }
 
-    if (ok) {
-        return 0
-    } else {
-        return 1
-    }
+    return ok
 }
 
 const parseTime = (time: string, referenceDate: Date = new Date()): Date => {
