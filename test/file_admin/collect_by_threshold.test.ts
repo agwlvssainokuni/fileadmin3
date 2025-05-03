@@ -42,7 +42,7 @@ describe('CollectByThreshold', () => {
             (f) => f.includes('file'), // extra_cond
             (a, b) => a.localeCompare(b), // comparator
             (f) => f.split('-')[1], // slicer
-            (time) => '20250102' // threshold
+            (_) => '20250102' // threshold
         )
 
         const result = instance.collect(new Date())

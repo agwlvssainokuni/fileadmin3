@@ -20,9 +20,9 @@ import {join, resolve} from 'path'
 import {BackupFile} from '../../src/file_admin/backup_file'
 import {FileCollector} from '../../src/file_admin/dsl'
 
-vi.mock('fs', {
+vi.mock('fs', () => ({
     renameSync: vi.fn(),
-})
+}))
 const mockRenameSync = vi.mocked(renameSync)
 
 describe('BackupFile', () => {
