@@ -14,40 +14,56 @@
  * limitations under the License.
  */
 
-import {describe, expect, it, vi} from 'vitest'
+import {beforeEach, describe, expect, it, vi} from 'vitest'
 import {globSync} from 'fast-glob'
 import {CollectByGeneration} from '../../src/file_admin/collect_by_generation'
 
 vi.mock('fast-glob', () => ({
     globSync: vi.fn(),
 }))
+const mockGlobSync = vi.mocked(globSync)
 
 describe('CollectByGeneration', () => {
-    it('collect should return files based on pattern, condition, comparator, and generation', () => {
-        // モックの設定
-        vi.mocked(globSync).mockImplementation((pattern) => {
-            if (pattern === '*.log') {
-                return ['file1.log', 'file2.log', 'file3.log', 'file4.log']
-            }
-            return []
-        })
+    beforeEach(() => {
+        vi.clearAllMocks()
+    })
 
+    it('collect should return files based on pattern, condition, comparator, and generation', () => {
+        // 事前条件
+        mockGlobSync.mockReturnValue([
+            'file1.log',
+            'file2.log',
+            'file3.log',
+            'file4.log',
+        ])
         const instance = new CollectByGeneration(
             ['*.log'],
-            (f) => f.includes('file'), // extra_cond
+            (f) => f.match(/^file\d\.log$/), // extra_cond
             (a, b) => a.localeCompare(b), // comparator
             2 // generation
         )
 
+        // 実行
         const result = instance.collect(new Date())
+
+        // 検証
         expect(result).toEqual(['file1.log', 'file2.log']) // 古い2つを残す
     })
 
     it('collect should handle empty results gracefully', () => {
-        vi.mocked(globSync).mockReturnValue([])
+        // 事前条件
+        mockGlobSync.mockReturnValue([])
+        const instance = new CollectByGeneration(
+            ['*.log'],
+            (f) => f.match(/^file\d\.log$/), // extra_cond
+            (a, b) => a.localeCompare(b), // comparator
+            2 // generation
+        )
 
-        const instance = new CollectByGeneration(['*.log'])
+        // 実行
         const result = instance.collect(new Date())
+
+        // 検証
         expect(result).toEqual([])
     })
 })

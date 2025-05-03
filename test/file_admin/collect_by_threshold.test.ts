@@ -14,41 +14,61 @@
  * limitations under the License.
  */
 
-import {describe, expect, it, vi} from 'vitest'
+import {beforeEach, describe, expect, it, vi} from 'vitest'
 import {globSync} from 'fast-glob'
 import {CollectByThreshold} from '../../src/file_admin/collect_by_threshold'
 
 vi.mock('fast-glob', () => ({
     globSync: vi.fn(),
 }))
+const mockGlobSync = vi.mocked(globSync)
 
 describe('CollectByThreshold', () => {
-    it('collect should return files based on pattern, condition, comparator, slicer, and threshold', () => {
-        // モックの設定
-        vi.mocked(globSync).mockImplementation((pattern) => {
-            if (pattern === '*.log') {
-                return ['file-20250101.log', 'file-20250102.log', 'file-20250103.log']
-            }
-            return []
-        })
+    beforeEach(() => {
+        vi.clearAllMocks()
+    })
 
+    it('collect should return files based on pattern, condition, comparator, slicer, and threshold', () => {
+        // 事前条件
+        mockGlobSync.mockReturnValue([
+            'file-20250101.log',
+            'file-20250102.log',
+            'file-20250103.log',
+            'file-20250104.log',
+        ])
         const instance = new CollectByThreshold(
             ['*.log'],
-            (f) => f.includes('file'), // extra_cond
+            (f) => f.match(/-(\d{8})\.log$/), // extra_cond
             (a, b) => a.localeCompare(b), // comparator
-            (f) => f.split('-')[1], // slicer
-            (_) => '20250102' // threshold
+            (f) => f.match(/-(\d{8})\.log$/)?.[1], // slicer
+            (_) => '20250103' // threshold
         )
 
+        // 実行
         const result = instance.collect(new Date())
-        expect(result).toEqual(['file-20250101.log']) // しきい値より古いファイルを残す
+
+        // 検証
+        expect(result).toEqual([
+            'file-20250101.log',
+            'file-20250102.log',
+        ]) // しきい値より古いファイルを残す
     })
 
     it('collect should handle empty results gracefully', () => {
-        vi.mocked(globSync).mockReturnValue([])
+        // 事前条件
+        mockGlobSync.mockReturnValue([])
+        const instance = new CollectByThreshold(
+            ['*.log'],
+            (f) => f.match(/-(\d{8})\.log$/), // extra_cond
+            (a, b) => a.localeCompare(b), // comparator
+            (f) => f.match(/-(\d{8})\.log$/)?.[1], // slicer
+            (_) => '20250103' // threshold
+        )
 
-        const instance = new CollectByThreshold(['*.log'])
+        // 実行
         const result = instance.collect(new Date())
+
+        // 検証
         expect(result).toEqual([])
     })
 })
