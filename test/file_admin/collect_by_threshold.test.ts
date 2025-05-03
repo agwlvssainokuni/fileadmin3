@@ -38,9 +38,9 @@ describe('CollectByThreshold', () => {
         ])
         const instance = new CollectByThreshold(
             ['*.log'],
-            (f) => f.match(/-(\d{8})\.log$/), // extra_cond
+            (f) => !!f.match(/-(\d{8})\.log$/), // extra_cond
             (a, b) => a.localeCompare(b), // comparator
-            (f) => f.match(/-(\d{8})\.log$/)?.[1], // slicer
+            (f) => f.match(/-(\d{8})\.log$/)?.[1] ?? '', // slicer
             (_) => '20250103' // threshold
         )
 
@@ -59,9 +59,9 @@ describe('CollectByThreshold', () => {
         mockGlobSync.mockReturnValue([])
         const instance = new CollectByThreshold(
             ['*.log'],
-            (f) => f.match(/-(\d{8})\.log$/), // extra_cond
+            (f) => !!f.match(/-(\d{8})\.log$/), // extra_cond
             (a, b) => a.localeCompare(b), // comparator
-            (f) => f.match(/-(\d{8})\.log$/)?.[1], // slicer
+            (f) => f.match(/-(\d{8})\.log$/)?.[1] ?? '', // slicer
             (_) => '20250103' // threshold
         )
 

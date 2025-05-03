@@ -38,7 +38,7 @@ describe('CollectByGeneration', () => {
         ])
         const instance = new CollectByGeneration(
             ['*.log'],
-            (f) => f.match(/^file\d\.log$/), // extra_cond
+            (f) => !!f.match(/^file\d\.log$/), // extra_cond
             (a, b) => a.localeCompare(b), // comparator
             2 // generation
         )
@@ -55,7 +55,7 @@ describe('CollectByGeneration', () => {
         mockGlobSync.mockReturnValue([])
         const instance = new CollectByGeneration(
             ['*.log'],
-            (f) => f.match(/^file\d\.log$/), // extra_cond
+            (f) => !!f.match(/^file\d\.log$/), // extra_cond
             (a, b) => a.localeCompare(b), // comparator
             2 // generation
         )
