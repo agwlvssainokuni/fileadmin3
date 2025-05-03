@@ -33,7 +33,7 @@ export class CollectByThreshold implements FileCollector {
         threshold?: (time: Date) => string,
     ) {
         this.pattern = pattern
-        this.extra_cond = extra_cond ?? (() => true)
+        this.extra_cond = extra_cond ?? ((_) => true)
         this.comparator = comparator ?? ((a, b) => a.localeCompare(b))
         this.slicer = slicer ?? ((f) => f)
         this.threshold = threshold ?? ((time) => lightFormat(time, 'yyyyMMdd'))

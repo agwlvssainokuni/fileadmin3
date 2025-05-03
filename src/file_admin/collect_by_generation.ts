@@ -30,7 +30,7 @@ export class CollectByGeneration implements FileCollector {
         generation?: number,
     ) {
         this.pattern = pattern
-        this.extra_cond = extra_cond ?? (() => true)
+        this.extra_cond = extra_cond ?? ((_) => true)
         this.comparator = comparator ?? ((a, b) => a.localeCompare(b))
         this.generation = generation ?? 0
     }
