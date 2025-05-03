@@ -44,7 +44,7 @@ describe('ArchiveManyToOne', () => {
     it('process should create a zip file and delete originals', () => {
         // 事前条件
         const collector: FileCollector = {
-            collect: () => ['file1.log', 'file2.log'],
+            collect: () => ['file1.log', 'dir2/file2.log'],
         }
         const instance = new ArchiveManyToOne(
             'test-label',
@@ -64,8 +64,8 @@ describe('ArchiveManyToOne', () => {
         expect(result).toBe(true)
         expect(MockAdmZip).toHaveBeenCalledTimes(1)
         expect(mockAddLocalFile).toHaveBeenCalledTimes(2)
-        expect(mockAddLocalFile).toHaveBeenCalledWith('file1.log')
-        expect(mockAddLocalFile).toHaveBeenCalledWith('file2.log')
+        expect(mockAddLocalFile).toHaveBeenCalledWith('file1.log', '.')
+        expect(mockAddLocalFile).toHaveBeenCalledWith('dir2/file2.log', 'dir2')
         expect(mockToBuffer).toHaveBeenCalledTimes(1)
         expect(mockWriteFileSync).toHaveBeenCalledTimes(1)
         expect(mockWriteFileSync).toHaveBeenCalledWith(
@@ -74,7 +74,7 @@ describe('ArchiveManyToOne', () => {
         )
         expect(mockUnlinkSync).toHaveBeenCalledTimes(2)
         expect(mockUnlinkSync).toHaveBeenCalledWith(resolve('file1.log'))
-        expect(mockUnlinkSync).toHaveBeenCalledWith(resolve('file2.log'))
+        expect(mockUnlinkSync).toHaveBeenCalledWith(resolve('dir2/file2.log'))
         expect(mockChownSync).toHaveBeenCalledTimes(1)
         expect(mockChownSync).toHaveBeenCalledWith(resolve(`./archive/archive-${time.toISOString()}.zip`), 1234, 5678)
     })
@@ -82,7 +82,7 @@ describe('ArchiveManyToOne', () => {
     it('process should not delete originals in retainOriginal mode', () => {
         // 事前条件
         const collector: FileCollector = {
-            collect: () => ['file1.log', 'file2.log'],
+            collect: () => ['file1.log', 'dir2/file2.log'],
         }
         const instance = new ArchiveManyToOne(
             'test-label',
@@ -111,7 +111,7 @@ describe('ArchiveManyToOne', () => {
     it('process should handle dryRun mode without making changes', () => {
         // 事前条件
         const collector: FileCollector = {
-            collect: () => ['file1.log', 'file2.log'],
+            collect: () => ['file1.log', 'dir2/file2.log'],
         }
         const instance = new ArchiveManyToOne(
             'test-label',
@@ -143,7 +143,7 @@ describe('ArchiveManyToOne', () => {
             throw new Error('write error')
         })
         const collector: FileCollector = {
-            collect: () => ['file1.log', 'file2.log'],
+            collect: () => ['file1.log', 'dir2/file2.log'],
         }
         const instance = new ArchiveManyToOne(
             'test-label',

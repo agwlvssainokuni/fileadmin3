@@ -15,7 +15,7 @@
  */
 
 import {chownSync, unlinkSync, writeFileSync} from 'fs'
-import {join, resolve} from 'path'
+import {dirname, join, resolve} from 'path'
 import AdmZip from 'adm-zip'
 import {FileCollector, FileProcessor} from './dsl'
 import {Logger} from './logger'
@@ -66,7 +66,7 @@ export class ArchiveManyToOne implements FileProcessor {
                 try {
                     const zip = new AdmZip()
                     for (const file of files) {
-                        zip.addLocalFile(file)
+                        zip.addLocalFile(file, dirname(file))
                     }
                     writeFileSync(arcfile, zip.toBuffer())
                 } catch (e) {

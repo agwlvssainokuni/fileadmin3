@@ -16,7 +16,7 @@
 
 import {beforeEach, describe, expect, it, vi} from 'vitest'
 import {chownSync, unlinkSync, writeFileSync} from 'fs'
-import {resolve} from 'path'
+import {basename, resolve} from 'path'
 import AdmZip from 'adm-zip'
 import {ArchiveOneToOne} from '../../src/file_admin/archive_one_to_one'
 import {FileCollector} from '../../src/file_admin/dsl'
@@ -44,14 +44,14 @@ describe('ArchiveOneToOne', () => {
     it('process should archive files and delete originals', () => {
         // 事前条件
         const collector: FileCollector = {
-            collect: () => ['file1.log', 'file2.log'],
+            collect: () => ['file1.log', 'dir2/file2.log'],
         }
         const instance = new ArchiveOneToOne(
             'test-label',
             '.',
             collector,
             './archive',
-            (file) => `${file}.zip`,
+            (file) => `${basename(file, '.log')}.zip`,
             [1234, 5678],
             false
         )
@@ -63,37 +63,37 @@ describe('ArchiveOneToOne', () => {
         expect(result).toBe(true)
         expect(MockAdmZip).toHaveBeenCalledTimes(2)
         expect(mockAddLocalFile).toHaveBeenCalledTimes(2)
-        expect(mockAddLocalFile).toHaveBeenCalledWith('file1.log')
-        expect(mockAddLocalFile).toHaveBeenCalledWith('file2.log')
+        expect(mockAddLocalFile).toHaveBeenCalledWith('file1.log', '.')
+        expect(mockAddLocalFile).toHaveBeenCalledWith('dir2/file2.log', 'dir2')
         expect(mockToBuffer).toHaveBeenCalledTimes(2)
         expect(mockWriteFileSync).toHaveBeenCalledTimes(2)
         expect(mockWriteFileSync).toHaveBeenCalledWith(
-            resolve('./archive/file1.log.zip'),
+            resolve('./archive/file1.zip'),
             Buffer.from('mock-zip-content')
         )
         expect(mockWriteFileSync).toHaveBeenCalledWith(
-            resolve('./archive/file2.log.zip'),
+            resolve('./archive/file2.zip'),
             Buffer.from('mock-zip-content')
         )
         expect(mockUnlinkSync).toHaveBeenCalledTimes(2)
         expect(mockUnlinkSync).toHaveBeenCalledWith(resolve('file1.log'))
-        expect(mockUnlinkSync).toHaveBeenCalledWith(resolve('file2.log'))
+        expect(mockUnlinkSync).toHaveBeenCalledWith(resolve('dir2/file2.log'))
         expect(mockChownSync).toHaveBeenCalledTimes(2)
-        expect(mockChownSync).toHaveBeenCalledWith(resolve('./archive/file1.log.zip'), 1234, 5678)
-        expect(mockChownSync).toHaveBeenCalledWith(resolve('./archive/file2.log.zip'), 1234, 5678)
+        expect(mockChownSync).toHaveBeenCalledWith(resolve('./archive/file1.zip'), 1234, 5678)
+        expect(mockChownSync).toHaveBeenCalledWith(resolve('./archive/file2.zip'), 1234, 5678)
     })
 
     it('process should not delete originals in retainOriginal mode', () => {
         // 事前条件
         const collector: FileCollector = {
-            collect: () => ['file1.log', 'file2.log'],
+            collect: () => ['file1.log', 'dir2/file2.log'],
         }
         const instance = new ArchiveOneToOne(
             'test-label',
             '.',
             collector,
             './archive',
-            (file) => `${file}.zip`,
+            (file) => `${basename(file, '.log')}.zip`,
             [1234, 5678],
             true
         )
@@ -114,14 +114,14 @@ describe('ArchiveOneToOne', () => {
     it('process should handle dryRun mode without making changes', () => {
         // 事前条件
         const collector: FileCollector = {
-            collect: () => ['file1.log', 'file2.log'],
+            collect: () => ['file1.log', 'dir2/file2.log'],
         }
         const instance = new ArchiveOneToOne(
             'test-label',
             '.',
             collector,
             './archive',
-            (file) => `${file}.zip`,
+            (file) => `${basename(file, '.log')}.zip`,
             [1234, 5678],
             false
         )
@@ -145,14 +145,14 @@ describe('ArchiveOneToOne', () => {
             throw new Error('write error')
         })
         const collector: FileCollector = {
-            collect: () => ['file1.log', 'file2.log'],
+            collect: () => ['file1.log', 'dir2/file2.log'],
         }
         const instance = new ArchiveOneToOne(
             'test-label',
             '.',
             collector,
             './archive',
-            (file) => `${file}.zip`,
+            (file) => `${basename(file, '.log')}.zip`,
             [1234, 5678],
             false
         )
