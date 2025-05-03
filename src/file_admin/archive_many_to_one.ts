@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import fs from 'node:fs'
-import path from 'node:path'
-import AdmZip from 'adm-zip'
+import {chownSync, unlinkSync, writeFileSync} from 'fs'
+import {join, resolve} from 'path'
+import {AdmZip} from 'adm-zip'
 import {FileCollector, FileProcessor} from './dsl'
 import {Logger} from './logger'
 
@@ -54,17 +54,17 @@ export class ArchiveManyToOne implements FileProcessor {
     process(time: Date, dryRun: boolean): boolean {
         this.logger.debug('start')
 
-        const to_dir = path.resolve(this.to_dir)
+        const to_dir = resolve(this.to_dir)
         const cwd = process.cwd()
         try {
-            process.chdir(path.resolve(this.basedir))
+            process.chdir(resolve(this.basedir))
             const files = this.collector.collect(time)
             if (files.length === 0) {
                 this.logger.debug('no files, skipped')
                 return true
             }
 
-            const arcfile = path.join(to_dir, this.arcname(time))
+            const arcfile = join(to_dir, this.arcname(time))
             this.logger.debug('processing: zip %s %s', arcfile, files.join(' '))
             if (!dryRun) {
                 try {
@@ -72,7 +72,7 @@ export class ArchiveManyToOne implements FileProcessor {
                     for (const file of files) {
                         zip.addLocalFile(file)
                     }
-                    fs.writeFileSync(arcfile, zip.toBuffer())
+                    writeFileSync(arcfile, zip.toBuffer())
                 } catch (e) {
                     this.logger.error('zip %s %s: NG, error=%s',
                         arcfile, files.join(' '), e)
@@ -83,11 +83,11 @@ export class ArchiveManyToOne implements FileProcessor {
 
             if (!this.retainOriginal) {
                 for (const file of files) {
-                    const target = path.resolve(file)
+                    const target = resolve(file)
                     this.logger.debug('processing: unlink %s', target)
                     if (!dryRun) {
                         try {
-                            fs.unlinkSync(target)
+                            unlinkSync(target)
                         } catch (e) {
                             this.logger.error('unlink %s: NG, error=%s',
                                 target, e)
@@ -103,7 +103,7 @@ export class ArchiveManyToOne implements FileProcessor {
                 this.logger.debug('processing: chown %d:%d %s', uid, gid, arcfile)
                 if (!dryRun) {
                     try {
-                        fs.chownSync(arcfile, uid, gid)
+                        chownSync(arcfile, uid, gid)
                     } catch (e) {
                         this.logger.error('chown %d:%d %s: NG, error=%s',
                             uid, gid, arcfile, e)
