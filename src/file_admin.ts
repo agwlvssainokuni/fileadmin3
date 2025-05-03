@@ -107,6 +107,7 @@ const createContext = (configurations: FileProcessor[], allowedToRequire: string
         console: console,
         __dirname: '',
         __filename: '',
+        exports: {},
         require: (id: string): any => {
             if (allowedToRequire.indexOf(id) === -1) {
                 return undefined
