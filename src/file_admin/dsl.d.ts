@@ -1,10 +1,8 @@
 export interface FileProcessor {
     process: (time: Date, dryRun: boolean) => boolean;
-    validate: () => boolean;
 }
 export interface FileCollector {
     collect: (time: Date) => string[];
-    validate: () => boolean;
 }
 export declare const archive_many_to_one: (label: string, config: {
     basedir: string;
