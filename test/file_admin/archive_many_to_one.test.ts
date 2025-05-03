@@ -21,29 +21,21 @@ import AdmZip from 'adm-zip'
 import {ArchiveManyToOne} from '../../src/file_admin/archive_many_to_one'
 import {FileCollector} from '../../src/file_admin/dsl'
 
-vi.mock('fs', () => ({
-    writeFileSync: vi.fn(),
-    unlinkSync: vi.fn(),
-    chownSync: vi.fn(),
+vi.mock('fs')
+vi.mock('adm-zip', () => ({
+    default: vi.fn().mockImplementation(() => {
+        return {
+            addLocalFile: vi.fn(),
+            toBuffer: vi.fn(() => Buffer.from('mock-zip-content')),
+        }
+    }),
 }))
-vi.mock('adm-zip', () => {
-    return {
-        default: vi.fn().mockImplementation(() => {
-            return {
-                addLocalFile: vi.fn(),
-                toBuffer: vi.fn(() => Buffer.from('mock-zip-content')),
-            }
-        }),
-    }
-})
-
 const mockWriteFileSync = vi.mocked(writeFileSync)
 const mockUnlinkSync = vi.mocked(unlinkSync)
 const mockChownSync = vi.mocked(chownSync)
 const MockAdmZip = vi.mocked(AdmZip)
 
 describe('ArchiveManyToOne', () => {
-
     beforeEach(() => {
         vi.clearAllMocks()
     })

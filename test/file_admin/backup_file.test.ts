@@ -20,14 +20,12 @@ import {join, resolve} from 'path'
 import {BackupFile} from '../../src/file_admin/backup_file'
 import {FileCollector} from '../../src/file_admin/dsl'
 
-vi.mock('fs', () => ({
-    renameSync: vi.fn(),
-}))
+vi.mock('fs')
 const mockRenameSync = vi.mocked(renameSync)
 
 describe('BackupFile', () => {
     beforeEach(() => {
-        mockRenameSync.mockClear()
+        vi.clearAllMocks()
     })
 
     it('process should rename files based on collector results', () => {

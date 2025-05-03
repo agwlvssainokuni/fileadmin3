@@ -20,14 +20,12 @@ import {resolve} from 'path'
 import {CleanupFile} from '../../src/file_admin/cleanup_file'
 import {FileCollector} from '../../src/file_admin/dsl'
 
-vi.mock('fs', () => ({
-    unlinkSync: vi.fn(),
-}))
+vi.mock('fs')
 const mockUnlinkSync = vi.mocked(unlinkSync)
 
 describe('CleanupFile', () => {
     beforeEach(() => {
-        mockUnlinkSync.mockClear()
+        vi.clearAllMocks()
     })
 
     it('validate should always return true', () => {
