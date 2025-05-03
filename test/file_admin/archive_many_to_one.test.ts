@@ -22,16 +22,19 @@ import {ArchiveManyToOne} from '../../src/file_admin/archive_many_to_one'
 import {FileCollector} from '../../src/file_admin/dsl'
 
 vi.mock('fs')
-vi.mock('adm-zip', () => ({
-    default: vi.fn(() => ({
-        addLocalFile: vi.fn(),
-        toBuffer: vi.fn(() => Buffer.from('mock-zip-content')),
-    })),
-}))
 const mockWriteFileSync = vi.mocked(writeFileSync)
 const mockUnlinkSync = vi.mocked(unlinkSync)
 const mockChownSync = vi.mocked(chownSync)
+
+vi.mock('adm-zip', () => ({
+    default: vi.fn(() => ({
+        addLocalFile: mockAddLocalFile,
+        toBuffer: mockToBuffer,
+    })),
+}))
 const MockAdmZip = vi.mocked(AdmZip)
+const mockAddLocalFile = vi.fn()
+const mockToBuffer = vi.fn(() => Buffer.from('mock-zip-content'))
 
 describe('ArchiveManyToOne', () => {
     beforeEach(() => {
@@ -60,12 +63,19 @@ describe('ArchiveManyToOne', () => {
         // 検証
         expect(result).toBe(true)
         expect(MockAdmZip).toHaveBeenCalledTimes(1)
+        expect(mockAddLocalFile).toHaveBeenCalledTimes(2)
+        expect(mockAddLocalFile).toHaveBeenCalledWith('file1.log')
+        expect(mockAddLocalFile).toHaveBeenCalledWith('file2.log')
+        expect(mockToBuffer).toHaveBeenCalledTimes(1)
+        expect(mockWriteFileSync).toHaveBeenCalledTimes(1)
         expect(mockWriteFileSync).toHaveBeenCalledWith(
             resolve(`./archive/archive-${time.toISOString()}.zip`),
             Buffer.from('mock-zip-content')
         )
+        expect(mockUnlinkSync).toHaveBeenCalledTimes(2)
         expect(mockUnlinkSync).toHaveBeenCalledWith(resolve('file1.log'))
         expect(mockUnlinkSync).toHaveBeenCalledWith(resolve('file2.log'))
+        expect(mockChownSync).toHaveBeenCalledTimes(1)
         expect(mockChownSync).toHaveBeenCalledWith(resolve(`./archive/archive-${time.toISOString()}.zip`), 1234, 5678)
     })
 

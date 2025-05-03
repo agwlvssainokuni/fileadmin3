@@ -22,16 +22,19 @@ import {ArchiveOneToOne} from '../../src/file_admin/archive_one_to_one'
 import {FileCollector} from '../../src/file_admin/dsl'
 
 vi.mock('fs')
-vi.mock('adm-zip', () => ({
-    default: vi.fn(() => ({
-        addLocalFile: vi.fn(),
-        toBuffer: vi.fn(() => Buffer.from('mock-zip-content')),
-    })),
-}))
 const mockWriteFileSync = vi.mocked(writeFileSync)
 const mockUnlinkSync = vi.mocked(unlinkSync)
 const mockChownSync = vi.mocked(chownSync)
+
+vi.mock('adm-zip', () => ({
+    default: vi.fn(() => ({
+        addLocalFile: mockAddLocalFile,
+        toBuffer: mockToBuffer,
+    })),
+}))
 const MockAdmZip = vi.mocked(AdmZip)
+const mockAddLocalFile = vi.fn()
+const mockToBuffer = vi.fn(() => Buffer.from('mock-zip-content'))
 
 describe('ArchiveOneToOne', () => {
     beforeEach(() => {
@@ -59,6 +62,11 @@ describe('ArchiveOneToOne', () => {
         // 検証
         expect(result).toBe(true)
         expect(MockAdmZip).toHaveBeenCalledTimes(2)
+        expect(mockAddLocalFile).toHaveBeenCalledTimes(2)
+        expect(mockAddLocalFile).toHaveBeenCalledWith('file1.log')
+        expect(mockAddLocalFile).toHaveBeenCalledWith('file2.log')
+        expect(mockToBuffer).toHaveBeenCalledTimes(2)
+        expect(mockWriteFileSync).toHaveBeenCalledTimes(2)
         expect(mockWriteFileSync).toHaveBeenCalledWith(
             resolve('./archive/file1.log.zip'),
             Buffer.from('mock-zip-content')
@@ -67,8 +75,10 @@ describe('ArchiveOneToOne', () => {
             resolve('./archive/file2.log.zip'),
             Buffer.from('mock-zip-content')
         )
+        expect(mockUnlinkSync).toHaveBeenCalledTimes(2)
         expect(mockUnlinkSync).toHaveBeenCalledWith(resolve('file1.log'))
         expect(mockUnlinkSync).toHaveBeenCalledWith(resolve('file2.log'))
+        expect(mockChownSync).toHaveBeenCalledTimes(2)
         expect(mockChownSync).toHaveBeenCalledWith(resolve('./archive/file1.log.zip'), 1234, 5678)
         expect(mockChownSync).toHaveBeenCalledWith(resolve('./archive/file2.log.zip'), 1234, 5678)
     })
