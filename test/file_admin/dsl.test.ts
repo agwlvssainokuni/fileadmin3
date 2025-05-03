@@ -32,7 +32,7 @@ import {CollectByThreshold} from '../../src/file_admin/collect_by_threshold'
 
 describe('dsl', () => {
     it('archive_many_to_one should create an ArchiveManyToOne instance', () => {
-        const mockCollector = {collect: () => [], validate: () => true}
+        const mockCollector = {collect: () => []}
         const result = archive_many_to_one('test-label', {
             basedir: '/base/dir',
             collector: mockCollector,
@@ -44,7 +44,7 @@ describe('dsl', () => {
     })
 
     it('archive_one_to_one should create an ArchiveOneToOne instance', () => {
-        const mockCollector = {collect: () => [], validate: () => true}
+        const mockCollector = {collect: () => []}
         const result = archive_one_to_one('test-label', {
             basedir: '/base/dir',
             collector: mockCollector,
@@ -56,7 +56,7 @@ describe('dsl', () => {
     })
 
     it('backup_file should create a BackupFile instance', () => {
-        const mockCollector = {collect: () => [], validate: () => true}
+        const mockCollector = {collect: () => []}
         const result = backup_file('test-label', {
             basedir: '/base/dir',
             collector: mockCollector,
@@ -66,7 +66,7 @@ describe('dsl', () => {
     })
 
     it('cleanup_file should create a CleanupFile instance', () => {
-        const mockCollector = {collect: () => [], validate: () => true}
+        const mockCollector = {collect: () => []}
         const result = cleanup_file('test-label', {
             basedir: '/base/dir',
             collector: mockCollector,

@@ -43,7 +43,6 @@ describe('ArchiveManyToOne', () => {
     it('process should create a zip file and delete originals', () => {
         // 事前条件
         const collector: FileCollector = {
-            validate: () => true,
             collect: () => ['file1.log', 'file2.log'],
         }
         const instance = new ArchiveManyToOne(
@@ -75,7 +74,6 @@ describe('ArchiveManyToOne', () => {
     it('process should not delete originals in retainOriginal mode', () => {
         // 事前条件
         const collector: FileCollector = {
-            validate: () => true,
             collect: () => ['file1.log'],
         }
         const instance = new ArchiveManyToOne(
@@ -99,7 +97,6 @@ describe('ArchiveManyToOne', () => {
     it('process should handle dryRun mode without making changes', () => {
         // 事前条件
         const collector: FileCollector = {
-            validate: () => true,
             collect: () => ['file1.log'],
         }
         const instance = new ArchiveManyToOne(
@@ -129,7 +126,6 @@ describe('ArchiveManyToOne', () => {
             throw new Error('write error')
         })
         const collector: FileCollector = {
-            validate: () => true,
             collect: () => ['file1.log'],
         }
         const instance = new ArchiveManyToOne(

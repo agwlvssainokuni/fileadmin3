@@ -38,7 +38,6 @@ export const file_admin = (args: string[]): number => {
     command
         .option('-t, --time <time>', '基準日時指定 (省略時: システム日時)',
             lightFormat(new Date(), 'yyyyMMddHHmmss'))
-        .option('-v, --validate', '設定チェックする', false)
         .option('-d, --dry-run', 'ドライランする', false)
         .option('-s, --syslog', 'SYSLOG出力する', true)
         .option('--no-syslog', 'SYSLOG出力しない')
@@ -79,21 +78,11 @@ export const file_admin = (args: string[]): number => {
         vm.runInContext(script, context, {filename: file})
     }
 
-    // (3) ファイル管理処理実行。
+    // (3) 設定内容に沿ってファイル管理処理を実行する。
     let ok: boolean = true
-    if (options.validate) {
-        // (3)-1 設定内容のバリデーションを実行する。
-        for (const config of configurations) {
-            if (!config.validate()) {
-                ok = false
-            }
-        }
-    } else {
-        // (3)-2 設定内容に沿ってファイル管理処理を実行する。
-        for (const config of configurations) {
-            if (!config.process(time, options.dryRun)) {
-                ok = false
-            }
+    for (const config of configurations) {
+        if (!config.process(time, options.dryRun)) {
+            ok = false
         }
     }
 

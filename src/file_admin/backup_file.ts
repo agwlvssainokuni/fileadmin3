@@ -37,10 +37,6 @@ export class BackupFile implements FileProcessor {
         this.to_dir = to_dir
     }
 
-    validate(): boolean {
-        return true
-    }
-
     process(time: Date, dryRun: boolean): boolean {
         this.logger.debug('start')
 

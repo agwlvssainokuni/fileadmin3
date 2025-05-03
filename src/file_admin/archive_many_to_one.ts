@@ -47,10 +47,6 @@ export class ArchiveManyToOne implements FileProcessor {
         this.retainOriginal = retainOriginal
     }
 
-    validate(): boolean {
-        return true
-    }
-
     process(time: Date, dryRun: boolean): boolean {
         this.logger.debug('start')
 

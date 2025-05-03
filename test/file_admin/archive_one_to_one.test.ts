@@ -40,25 +40,9 @@ describe('ArchiveOneToOne', () => {
         vi.clearAllMocks()
     })
 
-    it('validate should always return true', () => {
-        // 事前条件
-        const collector: FileCollector = {
-            validate: () => true,
-            collect: () => [],
-        }
-
-        // 実行
-        const instance = new ArchiveOneToOne('test-label', '.', collector, './archive', () => 'test.zip')
-        const result = instance.validate()
-
-        // 検証
-        expect(result).toBe(true)
-    })
-
     it('process should archive files and delete originals', () => {
         // 事前条件
         const collector: FileCollector = {
-            validate: () => true,
             collect: () => ['file1.log', 'file2.log'],
         }
         const instance = new ArchiveOneToOne(
@@ -94,7 +78,6 @@ describe('ArchiveOneToOne', () => {
     it('process should not delete originals in retainOriginal mode', () => {
         // 事前条件
         const collector: FileCollector = {
-            validate: () => true,
             collect: () => ['file1.log'],
         }
         const instance = new ArchiveOneToOne(
@@ -118,7 +101,6 @@ describe('ArchiveOneToOne', () => {
     it('process should handle dryRun mode without making changes', () => {
         // 事前条件
         const collector: FileCollector = {
-            validate: () => true,
             collect: () => ['file1.log'],
         }
         const instance = new ArchiveOneToOne(
@@ -148,7 +130,6 @@ describe('ArchiveOneToOne', () => {
             throw new Error('write error')
         })
         const collector: FileCollector = {
-            validate: () => true,
             collect: () => ['file1.log'],
         }
         const instance = new ArchiveOneToOne(

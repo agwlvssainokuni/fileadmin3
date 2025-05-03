@@ -5,7 +5,6 @@ FileAdmin3 - ファイル管理
 ```bash
 fileadmin.js [options] 設定ファイル...
     --time TIME        基準日時指定 (省略時: システム日時)
-    --validate         設定チェックする
     --dry-run          ドライランする
     --[no-]syslog      SYSLOG出力フラグ (省略時: SYSLOG出力する)
     --[no-]console     コンソール出力フラグ (省略時: コンソール出力しない)
@@ -16,11 +15,9 @@ fileadmin.js [options] 設定ファイル...
 ```TypeScript
 export interface FileProcessor {
     process: (time: Date, dryRun: boolean) => boolean;
-    validate: () => boolean;
 }
 export interface FileCollector {
     collect: (time: Date) => string[];
-    validate: () => boolean;
 }
 ```
 

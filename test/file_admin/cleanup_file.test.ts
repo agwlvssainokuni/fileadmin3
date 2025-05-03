@@ -28,19 +28,9 @@ describe('CleanupFile', () => {
         vi.clearAllMocks()
     })
 
-    it('validate should always return true', () => {
-        const collector: FileCollector = {
-            validate: () => true,
-            collect: () => [],
-        }
-        const instance = new CleanupFile('test-label', '.', collector)
-        expect(instance.validate()).toBe(true)
-    })
-
     it('process should delete files based on collector results', () => {
         // 事前条件
         const collector: FileCollector = {
-            validate: () => true,
             collect: () => ['file1.log', 'file2.log', 'file3.log'],
         }
 
@@ -59,7 +49,6 @@ describe('CleanupFile', () => {
     it('process should not delete files in dryRun mode', () => {
         // 事前条件
         const collector: FileCollector = {
-            validate: () => true,
             collect: () => ['file1.log', 'file2.log'],
         }
 
@@ -75,7 +64,6 @@ describe('CleanupFile', () => {
     it('process should handle empty collector results gracefully', () => {
         // 事前条件
         const collector: FileCollector = {
-            validate: () => true,
             collect: () => [],
         }
 
@@ -94,7 +82,6 @@ describe('CleanupFile', () => {
             throw new Error('unlink error')
         })
         const collector: FileCollector = {
-            validate: () => true,
             collect: () => ['file1.log', 'file2.log'],
         }
 

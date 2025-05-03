@@ -23,12 +23,10 @@ import {CollectByThreshold} from './collect_by_threshold'
 
 export interface FileProcessor {
     process: (time: Date, dryRun: boolean) => boolean
-    validate: () => boolean
 }
 
 export interface FileCollector {
     collect: (time: Date) => string[]
-    validate: () => boolean
 }
 
 export const archive_many_to_one = (

@@ -34,10 +34,6 @@ export class CleanupFile implements FileProcessor {
         this.collector = collector
     }
 
-    validate(): boolean {
-        return true
-    }
-
     process(time: Date, dryRun: boolean): boolean {
         this.logger.debug('start')
 

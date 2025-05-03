@@ -31,7 +31,6 @@ describe('BackupFile', () => {
     it('process should rename files based on collector results', () => {
         // 事前条件
         const collector: FileCollector = {
-            validate: () => true,
             collect: () => ['file1.log', 'file2.log', 'file3.log'],
         }
 
@@ -59,7 +58,6 @@ describe('BackupFile', () => {
     it('process should not rename files in dryRun mode', () => {
         // 事前条件
         const collector: FileCollector = {
-            validate: () => true,
             collect: () => ['file1.log', 'file2.log'],
         }
 
@@ -75,7 +73,6 @@ describe('BackupFile', () => {
     it('process should handle empty collector results gracefully', () => {
         // 事前条件
         const collector: FileCollector = {
-            validate: () => true,
             collect: () => [],
         }
 
@@ -94,7 +91,6 @@ describe('BackupFile', () => {
             throw new Error('rename error')
         })
         const collector: FileCollector = {
-            validate: () => true,
             collect: () => ['file1.log', 'file2.log'],
         }
 

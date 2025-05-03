@@ -39,7 +39,6 @@ describe('file_admin', () => {
             backup_file('test-label', {
                 basedir: '.',
                 collector: {
-                    validate: () => true,
                     collect: () => ['file1.log', 'file2.log'],
                 },
                 to_dir: './backup',
@@ -55,28 +54,6 @@ describe('file_admin', () => {
         expect(readFileSync).toHaveBeenCalledWith(resolve('test.dsl'), {encoding: 'utf8'})
     })
 
-    it('should return 0 if any configuration validation succeeds', () => {
-        // 事前条件
-        const mockArgs = ['node', 'fileadmin.js', '--validate', 'test.dsl']
-        const mockScript = `
-            backup_file('test-label', {
-                basedir: '.',
-                collector: {
-                    validate: () => false,
-                    collect: () => [],
-                },
-                to_dir: './backup',
-            })
-        `
-        vi.mocked(readFileSync).mockReturnValue(mockScript)
-
-        // 実行
-        const result = file_admin(mockArgs)
-
-        // 検証
-        expect(result).toBe(0)
-    })
-
     it('should return 0 if any configuration process succeeds', () => {
         // 事前条件
         const mockArgs = ['node', 'fileadmin.js', 'test.dsl']
@@ -84,7 +61,6 @@ describe('file_admin', () => {
             backup_file('test-label', {
                 basedir: '.',
                 collector: {
-                    validate: () => true,
                     collect: () => ['file1.log'],
                 },
                 to_dir: './backup',

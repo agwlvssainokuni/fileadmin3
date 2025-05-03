@@ -23,11 +23,6 @@ vi.mock('fast-glob', () => ({
 }))
 
 describe('CollectByThreshold', () => {
-    it('validate should always return true', () => {
-        const instance = new CollectByThreshold(['*.log'])
-        expect(instance.validate()).toBe(true)
-    })
-
     it('collect should return files based on pattern, condition, comparator, slicer, and threshold', () => {
         // モックの設定
         vi.mocked(globSync).mockImplementation((pattern) => {

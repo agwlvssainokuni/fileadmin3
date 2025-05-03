@@ -35,10 +35,6 @@ export class CollectByGeneration implements FileCollector {
         this.generation = generation ?? 0
     }
 
-    validate(): boolean {
-        return true
-    }
-
     collect(_: Date): string[] {
         return this.pattern.flatMap(p => {
             const l = globSync(p).filter(this.extra_cond).sort(this.comparator)

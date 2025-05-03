@@ -39,10 +39,6 @@ export class CollectByThreshold implements FileCollector {
         this.threshold = threshold ?? ((time) => lightFormat(time, 'yyyyMMdd'))
     }
 
-    validate(): boolean {
-        return true
-    }
-
     collect(time: Date): string[] {
         const threshold = this.threshold(time)
         return this.pattern.flatMap(p => {
