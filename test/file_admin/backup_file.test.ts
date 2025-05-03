@@ -40,6 +40,7 @@ describe('BackupFile', () => {
 
         // 検証
         expect(result).toBe(true)
+        expect(mockRenameSync).toHaveBeenCalledTimes(3)
         expect(mockRenameSync).toHaveBeenCalledWith(
             resolve('file1.log'),
             join(resolve('./backup'), 'file1.log')
@@ -52,7 +53,6 @@ describe('BackupFile', () => {
             resolve('file3.log'),
             join(resolve('./backup'), 'file3.log')
         )
-        expect(mockRenameSync).toHaveBeenCalledTimes(3)
     })
 
     it('process should not rename files in dryRun mode', () => {
@@ -67,7 +67,7 @@ describe('BackupFile', () => {
 
         // 検証
         expect(result).toBe(true)
-        expect(mockRenameSync).toHaveBeenCalledTimes(0)
+        expect(mockRenameSync).not.toHaveBeenCalled()
     })
 
     it('process should handle empty collector results gracefully', () => {
@@ -82,7 +82,7 @@ describe('BackupFile', () => {
 
         // 検証
         expect(result).toBe(true)
-        expect(mockRenameSync).toHaveBeenCalledTimes(0)
+        expect(mockRenameSync).not.toHaveBeenCalled()
     })
 
     it('process should return false if renameSync throws an error', () => {
@@ -100,10 +100,10 @@ describe('BackupFile', () => {
 
         // 検証
         expect(result).toBe(false)
+        expect(mockRenameSync).toHaveBeenCalledTimes(1)
         expect(mockRenameSync).toHaveBeenCalledWith(
             resolve('file1.log'),
             join(resolve('./backup'), 'file1.log')
         )
-        expect(mockRenameSync).toHaveBeenCalledTimes(1)
     })
 })

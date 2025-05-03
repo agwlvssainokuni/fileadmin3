@@ -40,10 +40,10 @@ describe('CleanupFile', () => {
 
         // 検証
         expect(result).toBe(true)
+        expect(mockUnlinkSync).toHaveBeenCalledTimes(3)
         expect(mockUnlinkSync).toHaveBeenCalledWith(resolve('file1.log'))
         expect(mockUnlinkSync).toHaveBeenCalledWith(resolve('file2.log'))
         expect(mockUnlinkSync).toHaveBeenCalledWith(resolve('file3.log'))
-        expect(mockUnlinkSync).toHaveBeenCalledTimes(3)
     })
 
     it('process should not delete files in dryRun mode', () => {
@@ -58,7 +58,7 @@ describe('CleanupFile', () => {
 
         // 検証
         expect(result).toBe(true)
-        expect(mockUnlinkSync).toHaveBeenCalledTimes(0)
+        expect(mockUnlinkSync).not.toHaveBeenCalled()
     })
 
     it('process should handle empty collector results gracefully', () => {
@@ -73,7 +73,7 @@ describe('CleanupFile', () => {
 
         // 検証
         expect(result).toBe(true)
-        expect(mockUnlinkSync).toHaveBeenCalledTimes(0)
+        expect(mockUnlinkSync).not.toHaveBeenCalled()
     })
 
     it('process should return false if unlinkSync throws an error', () => {
@@ -91,7 +91,7 @@ describe('CleanupFile', () => {
 
         // 検証
         expect(result).toBe(false)
-        expect(mockUnlinkSync).toHaveBeenCalledWith(resolve('file1.log'))
         expect(mockUnlinkSync).toHaveBeenCalledTimes(1)
+        expect(mockUnlinkSync).toHaveBeenCalledWith(resolve('file1.log'))
     })
 })
