@@ -16,7 +16,7 @@
 
 import {chownSync, unlinkSync, writeFileSync} from 'fs'
 import {join, resolve} from 'path'
-import {AdmZip} from 'adm-zip'
+import AdmZip from 'adm-zip'
 import {FileCollector, FileProcessor} from './dsl'
 import {Logger} from './logger'
 

@@ -17,7 +17,7 @@
 import {beforeEach, describe, expect, it, vi} from 'vitest'
 import {chownSync, unlinkSync, writeFileSync} from 'fs'
 import {resolve} from 'path'
-import {AdmZip} from 'adm-zip'
+import AdmZip from 'adm-zip'
 import {ArchiveManyToOne} from '../../src/file_admin/archive_many_to_one'
 import {FileCollector} from '../../src/file_admin/dsl'
 
@@ -28,7 +28,7 @@ vi.mock('fs', () => ({
 }))
 vi.mock('adm-zip', () => {
     return {
-        AdmZip: vi.fn().mockImplementation(() => {
+        default: vi.fn().mockImplementation(() => {
             return {
                 addLocalFile: vi.fn(),
                 toBuffer: vi.fn(() => Buffer.from('mock-zip-content')),
