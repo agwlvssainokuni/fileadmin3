@@ -104,9 +104,9 @@ export const cleanup_file = (
 export const collect_by_generation = (
     config: {
         pattern: string[],
-        extra_cond: (f: string) => boolean,
-        comparator: (a: string, b: string) => number,
-        generation: number,
+        extra_cond?: (f: string) => boolean,
+        comparator?: (a: string, b: string) => number,
+        generation?: number,
     }
 ): FileCollector => {
     return new CollectByGeneration(
@@ -120,10 +120,10 @@ export const collect_by_generation = (
 export const collect_by_threshold = (
     config: {
         pattern: string[],
-        extra_cond: (f: string) => boolean,
-        comparator: (a: string, b: string) => number,
-        slicer: (f: string) => string,
-        threshold: (time: Date) => string,
+        extra_cond?: (f: string) => boolean,
+        comparator?: (a: string, b: string) => number,
+        slicer?: (f: string) => string,
+        threshold?: (time: Date) => string,
     }
 ): FileCollector => {
     return new CollectByThreshold(
