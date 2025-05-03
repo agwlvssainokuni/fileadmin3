@@ -23,10 +23,10 @@ import {FileCollector} from '../../src/file_admin/dsl'
 
 vi.mock('fs')
 vi.mock('adm-zip', () => ({
-    default: vi.fn().mockReturnValue({
+    default: vi.fn(() => ({
         addLocalFile: vi.fn(),
         toBuffer: vi.fn(() => Buffer.from('mock-zip-content')),
-    }),
+    })),
 }))
 const mockWriteFileSync = vi.mocked(writeFileSync)
 const mockUnlinkSync = vi.mocked(unlinkSync)
