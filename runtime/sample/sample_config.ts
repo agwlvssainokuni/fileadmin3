@@ -41,7 +41,7 @@ backup_file('退避テスト', {
     collector: collect_by_threshold({
         pattern: ['foreach_*.zip', 'aggregate_*.zip'],
         extra_cond: (a) => !!a.match(/_(\d{14})\.zip$/),
-        slicer: (a) => a.match(/_(\d{14})\.zip$/)?.[1],
+        slicer: (a) => a.match(/_(\d{14})\.zip$/)?.[1] ?? '99999999999999',
         threshold: (time) => lightFormat(addDays(time, -1), 'yyyyMMddHHmmss'),
     }),
     to_dir: `${__dirname}/2back`,
@@ -52,7 +52,7 @@ cleanup_file('削除テスト', {
     collector: collect_by_threshold({
         pattern: ['foreach_*.zip', 'aggregate_*.zip'],
         extra_cond: (a) => !!a.match(/_(\d{14})\.zip$/),
-        slicer: (a) => a.match(/_(\d{14})\.zip$/)?.[1],
+        slicer: (a) => a.match(/_(\d{14})\.zip$/)?.[1] ?? '99999999999999',
         threshold: (time) => lightFormat(addDays(time, -2), 'yyyyMMddHHmmss'),
     }),
 })
