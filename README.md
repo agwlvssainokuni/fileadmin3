@@ -75,10 +75,10 @@ declare const cleanup_file: (label: string, config: {
 指定した並び順に並べ、所定の世代数分を末尾から除外したものを対象とする。(古いものを抽出)
 ```TypeScript
 declare const collect_by_generation: (config: {
-    pattern: string[];                  // 収集対象のパスをワイルドカードで指定。
-    extra_cond: (f: string) => boolean; // patternで抽出したファイルの追加抽出条件。省略可。
-    comparator: (a: string, b: string) => number;   // 抽出したファイル名の並び順。patternを複数指定した場合は要素ごとに整列する。省略可。
-    generation: number;                 // comparator順に並べて末尾generation件を除いたものを対象とする (古いものを抽出)。
+    pattern: string[];                      // 収集対象のパスをワイルドカードで指定。
+    extra_cond?: (f: string) => boolean;    // patternで抽出したファイルの追加抽出条件。省略可。
+    comparator?: (a: string, b: string) => number;  // 抽出したファイル名の並び順。patternを複数指定した場合は要素ごとに整列する。省略可。
+    generation?: number;                    // comparator順に並べて末尾generation件を除いたものを対象とする (古いものを抽出)。
 }) => FileCollector;
 ```
 
@@ -86,11 +86,11 @@ declare const collect_by_generation: (config: {
 実行日時から閾値文字列を生成。ファイル名の日時部分が閾値よりも小(<)のものを対象とする。(古いものを抽出)
 ```TypeScript
 declare const collect_by_threshold: (config: {
-    pattern: string[];                  // 収集対象のパスをワイルドカードで指定。
-    extra_cond: (f: string) => boolean; // patternで抽出したファイルの追加抽出条件。省略可。
-    comparator: (a: string, b: string) => number;   // 抽出したファイル名の並び順。patternを複数指定した場合は要素ごとに整列する。省略可。
-    slicer: (f: string) => string;      // 抽出したファイル名から閾値と比較するための文字列を生成する。
-    threshold: (time: Date) => string;  // 実行日時から閾値文字列を生成する。この閾値文字列よりも小(<)のものを対象とする (古いものを抽出)。
+    pattern: string[];                      // 収集対象のパスをワイルドカードで指定。
+    extra_cond?: (f: string) => boolean;    // patternで抽出したファイルの追加抽出条件。省略可。
+    comparator?: (a: string, b: string) => number;  // 抽出したファイル名の並び順。patternを複数指定した場合は要素ごとに整列する。省略可。
+    slicer?: (f: string) => string;         // 抽出したファイル名から閾値と比較するための文字列を生成する。
+    threshold?: (time: Date) => string;     // 実行日時から閾値文字列を生成する。この閾値文字列よりも小(<)のものを対象とする (古いものを抽出)。
 }) => FileCollector;
 ```
 
