@@ -26,12 +26,25 @@ const mockWriteFileSync = vi.mocked(writeFileSync)
 const mockUnlinkSync = vi.mocked(unlinkSync)
 const mockChownSync = vi.mocked(chownSync)
 
-vi.mock('adm-zip', () => ({
-    default: vi.fn(() => ({
-        addLocalFile: mockAddLocalFile,
-        toBuffer: mockToBuffer,
-    })),
-}))
+vi.mock('adm-zip', async () => {
+    // adm-zipのモジュールをモックする
+    // adm-zipは特殊な実装をしているためそれに合わせたモックの作り方をする必要がある
+    // functionをdefault export。これは変わらない。
+    // 通常はfunctionのprototypeにメソッドを追加するが、adm-zipではそのfunction
+    // が「メソッド名をキーとしたオブジェクト(= instance)」を返却する形態をとっている。
+    // そのため prototype に対するモックでは対応できない。
+    const original = await vi.importActual('adm-zip')
+    return {
+        default: vi.fn(() => {
+            const instance = new (original.default as typeof AdmZip)()
+            return {
+                ...instance,
+                addLocalFile: mockAddLocalFile,
+                toBuffer: mockToBuffer,
+            }
+        })
+    }
+})
 const MockAdmZip = vi.mocked(AdmZip)
 const mockAddLocalFile = vi.fn()
 const mockToBuffer = vi.fn(() => Buffer.from('mock-zip-content'))
