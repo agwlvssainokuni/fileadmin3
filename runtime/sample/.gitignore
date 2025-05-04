@@ -1,0 +1,8 @@
+# 対象ファイル
+/0file/
+/1arch/
+/2back/
+
+# 設定ファイル(DSL)
+!sample_config.ts
+!sample_config.js

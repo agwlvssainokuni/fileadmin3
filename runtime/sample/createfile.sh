@@ -15,7 +15,7 @@
 #  limitations under the License.
 #
 
-basedir=$(dirname ${BASH_SOURCE[0]})
+basedir=$(cd $(dirname ${BASH_SOURCE[0]}) && pwd)
 
 mkdir -p ${basedir}/0file/aaa
 mkdir -p ${basedir}/0file/bbb
