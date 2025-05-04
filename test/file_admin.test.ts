@@ -45,6 +45,7 @@ vi.mock(import('commander'), async (importOriginal) => {
     mod.Command.prototype.outputHelp = vi.fn()
     return mod
 })
+const mockOutputHelp = vi.mocked(Command.prototype.outputHelp)
 
 describe('file_admin', () => {
     beforeEach(() => {
@@ -86,8 +87,8 @@ describe('file_admin', () => {
 
             // 検証
             expect(result).toBeTruthy()
-            expect(Command.prototype.outputHelp).toHaveBeenCalledTimes(1)
-            expect(Command.prototype.outputHelp).toHaveBeenCalledWith()
+            expect(mockOutputHelp).toHaveBeenCalledTimes(1)
+            expect(mockOutputHelp).toHaveBeenCalledWith()
         })
 
         it('--helpなし', () => {
@@ -99,7 +100,7 @@ describe('file_admin', () => {
 
             // 検証
             expect(result).toBeTruthy()
-            expect(Command.prototype.outputHelp).not.toHaveBeenCalled()
+            expect(mockOutputHelp).not.toHaveBeenCalled()
         })
     })
 
