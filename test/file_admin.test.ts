@@ -17,6 +17,7 @@
 import {beforeEach, describe, expect, it, vi} from 'vitest'
 import {readFileSync} from 'fs'
 import {resolve} from 'path'
+import {Command} from 'commander'
 import {file_admin} from '../src/file_admin'
 import {
     archive_many_to_one,
@@ -39,6 +40,11 @@ const mockArchiveManyToOneProsess = vi.fn()
 const mockArchiveOneToOneProsess = vi.fn()
 const mockBackupFileProcess = vi.fn()
 const mockCleanupFileProcess = vi.fn()
+vi.mock(import('commander'), async (importOriginal) => {
+    const mod = await importOriginal()
+    mod.Command.prototype.outputHelp = vi.fn()
+    return mod
+})
 
 describe('file_admin', () => {
     beforeEach(() => {
@@ -70,10 +76,31 @@ describe('file_admin', () => {
         })
     })
 
-    it('--helpオプション', () => {
-        const mockArgs = ['node', 'fileadmin.js', '--help']
-        const result = file_admin(mockArgs)
-        expect(result).toBeTruthy()
+    describe('ヘルプ', () => {
+        it('--helpあり', () => {
+            // 事前条件
+            const mockArgs = ['node', 'fileadmin.js', '--help']
+
+            // 実行
+            const result = file_admin(mockArgs)
+
+            // 検証
+            expect(result).toBeTruthy()
+            expect(Command.prototype.outputHelp).toHaveBeenCalledTimes(1)
+            expect(Command.prototype.outputHelp).toHaveBeenCalledWith()
+        })
+
+        it('--helpなし', () => {
+            // 事前条件
+            const mockArgs = ['node', 'fileadmin.js']
+
+            // 実行
+            const result = file_admin(mockArgs)
+
+            // 検証
+            expect(result).toBeTruthy()
+            expect(Command.prototype.outputHelp).not.toHaveBeenCalled()
+        })
     })
 
     describe('DSLスクリプトの読み込み', () => {
