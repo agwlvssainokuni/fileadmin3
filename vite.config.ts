@@ -31,31 +31,29 @@ export default defineConfig({
         rollupOptions: {
             // https://github.com/vitejs/vite/issues/7821
             external: [
-                'node:events',
                 'node:child_process',
-                'node:path',
+                'node:events',
                 'node:fs',
+                'node:os',
+                'node:path',
                 'node:process',
                 'node:vm',
-                'node:os',
-                // for winston
+                'buffer',
+                'crypto',
                 'dgram',
-                'net',
-                'tls',
                 'events',
-                'util',
-                'os',
                 'fs',
-                'path',
-                'zlib',
                 'http',
                 'https',
+                'net',
+                'os',
+                'path',
                 'stream',
-                'buffer',
-                // for winston-syslog
-                'unix-dgram',   // ネイティブライブラリを含むためバンドルしない
-                // for adm-zip
-                'crypto',
+                'tls',
+                'util',
+                'zlib',
+                // ネイティブライブラリを含むためバンドルしない
+                'unix-dgram',
             ],
         }
     }
