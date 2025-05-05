@@ -18,7 +18,7 @@ import {Command} from 'commander'
 import {lightFormat, parse} from 'date-fns'
 import {readFileSync} from 'fs'
 import {dirname, resolve} from 'path'
-import vm from 'node:vm'
+import {createContext, runInContext} from 'vm'
 import {
     archive_many_to_one,
     archive_one_to_one,
@@ -69,13 +69,13 @@ export const file_admin = (args: string[]): boolean => {
         'path',
         'date-fns',
     ]
-    const context = createContext(configurations, allowedToRequire)
+    const context = createDslContext(configurations, allowedToRequire)
     for (const f of command.args) {
         const file = resolve(f)
         const script = readFileSync(file, {encoding: 'utf8'})
         context.__dirname = dirname(file)
         context.__filename = file
-        vm.runInContext(script, context, {filename: file})
+        runInContext(script, context, {filename: file})
     }
 
     // (3) 設定内容に沿ってファイル管理処理を実行する。
@@ -102,8 +102,8 @@ const parseTime = (time: string, referenceDate: Date = new Date()): Date => {
     return parse(time, formatStr ?? 'yyyyMMddHHmmss', referenceDate)
 }
 
-const createContext = (configurations: FileProcessor[], allowedToRequire: string[]) =>
-    vm.createContext({
+const createDslContext = (configurations: FileProcessor[], allowedToRequire: string[]) =>
+    createContext({
         console: console,
         __dirname: '',
         __filename: '',

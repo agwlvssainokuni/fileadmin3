@@ -37,7 +37,6 @@ export default defineConfig({
                 'node:os',
                 'node:path',
                 'node:process',
-                'node:vm',
                 'buffer',
                 'crypto',
                 'dgram',
@@ -51,6 +50,7 @@ export default defineConfig({
                 'stream',
                 'tls',
                 'util',
+                'vm',
                 'zlib',
                 // ネイティブライブラリを含むためバンドルしない
                 'unix-dgram',
