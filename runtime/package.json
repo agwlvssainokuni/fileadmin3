@@ -9,7 +9,7 @@
     "unix-dgram": "^2.0.6"
   },
   "devDependencies": {
-    "@types/node": "^22.15.3",
+    "@types/node": "^22.15.9",
     "typescript": "^5.8.3"
   }
 }
